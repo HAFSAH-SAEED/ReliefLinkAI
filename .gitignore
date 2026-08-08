@@ -28,3 +28,7 @@ build/
 # Operating system metadata.
 .DS_Store
 Thumbs.db
+.backboard/
+reliefLink.json
+__pycache__/
+*.pyc

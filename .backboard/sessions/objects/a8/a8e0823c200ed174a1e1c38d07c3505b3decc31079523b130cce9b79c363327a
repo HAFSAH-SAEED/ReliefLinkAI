@@ -1,2 +1,0 @@
-(self, name: str, description: Optional[str] = None, system_prompt: Optional[str] = None, tools: Optional[List[Union[backboard.models.ToolDefinition, Dict[str, Any]]]] = None, tok_k: Optional[int] = None, custom_fact_extraction_prompt: Optional[str] = None, custom_update_memory_prompt: Optional[str] = None, embedding_provider: Optional[str] = None, embedding_model_name: Optional[str] = None, embedding_dims: Optional[int] = None) -> backboard.models.Assistant
-(self, assistant_id: Union[str, uuid.UUID]) -> backboard.models.Assistant

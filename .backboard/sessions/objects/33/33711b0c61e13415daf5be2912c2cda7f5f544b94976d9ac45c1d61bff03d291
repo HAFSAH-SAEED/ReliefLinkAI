@@ -1,5 +1,0 @@
-version 1.5.15
-create_assistant coroutine True
-get_assistant coroutine True
-create_thread coroutine True
-send_message coroutine True

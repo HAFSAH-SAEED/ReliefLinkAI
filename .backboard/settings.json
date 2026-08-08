@@ -1,7 +1,0 @@
-{
-	"permissions": {
-		"allow": [
-			"execute(python -c:*)"
-		]
-	}
-}

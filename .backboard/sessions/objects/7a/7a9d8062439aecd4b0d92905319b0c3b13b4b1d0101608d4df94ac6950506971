@@ -1,3 +1,0 @@
-# Runtime dependencies for the ReliefLink AI Streamlit prototype.
-backboard-sdk>=0.1.0
-streamlit>=1.37.0
