@@ -1,0 +1,2 @@
+# Runtime dependencies for the ReliefLink AI Streamlit prototype.
+streamlit>=1.37.0

@@ -1,0 +1,206 @@
+"""Streamlit UI rendering for ReliefLink AI.
+
+This module preserves the current homepage design exactly while separating UI
+code from the application entry point and future business logic.
+"""
+
+import streamlit as st
+
+from config import APP_DESCRIPTION, APP_SUBTITLE, APP_TITLE, PROJECT_STATUS, PROJECT_VERSION
+
+
+def render_homepage(page_config: dict[str, str]) -> None:
+    """Render the current ReliefLink AI homepage."""
+    st.set_page_config(**page_config)
+    _render_styles()
+    _render_sidebar()
+    _render_hero()
+    _render_feature_cards()
+    _render_start_button()
+
+
+def _render_styles() -> None:
+    """Apply the current custom Streamlit CSS theme."""
+    st.markdown(
+        """
+        <style>
+            .stApp {
+                background: linear-gradient(135deg, #f7fbff 0%, #eaf4ff 45%, #ffffff 100%);
+                color: #0f172a;
+            }
+
+            [data-testid="stSidebar"] {
+                background: #0f4c81;
+            }
+
+            [data-testid="stSidebar"] * {
+                color: #ffffff;
+            }
+
+            .hero {
+                padding: 3.5rem 2.5rem;
+                border-radius: 28px;
+                background: linear-gradient(135deg, #0f4c81 0%, #1e88e5 100%);
+                color: white;
+                box-shadow: 0 24px 60px rgba(15, 76, 129, 0.22);
+                margin-bottom: 2rem;
+            }
+
+            .hero h1 {
+                font-size: 4rem;
+                line-height: 1.05;
+                margin: 0 0 0.8rem 0;
+                color: white;
+            }
+
+            .hero h2 {
+                font-size: 1.65rem;
+                font-weight: 500;
+                margin: 0 0 1.4rem 0;
+                color: #dbeafe;
+            }
+
+            .hero p {
+                max-width: 860px;
+                font-size: 1.1rem;
+                line-height: 1.75;
+                color: #f8fafc;
+                margin: 0;
+            }
+
+            .section-title {
+                color: #0f4c81;
+                font-size: 1.6rem;
+                font-weight: 700;
+                margin: 0.5rem 0 1rem 0;
+            }
+
+            .feature-card {
+                min-height: 190px;
+                padding: 1.8rem;
+                border-radius: 22px;
+                background: rgba(255, 255, 255, 0.92);
+                border: 1px solid rgba(30, 136, 229, 0.14);
+                box-shadow: 0 16px 36px rgba(15, 76, 129, 0.1);
+            }
+
+            .feature-card h3 {
+                color: #0f4c81;
+                font-size: 1.35rem;
+                margin-bottom: 0.75rem;
+            }
+
+            .feature-card p {
+                color: #475569;
+                line-height: 1.65;
+                margin: 0;
+            }
+
+            .stButton > button {
+                background: #1e88e5;
+                border: 0;
+                color: #ffffff;
+                border-radius: 999px;
+                padding: 0.85rem 1.6rem;
+                font-weight: 700;
+                box-shadow: 0 12px 28px rgba(30, 136, 229, 0.28);
+            }
+
+            .stButton > button:hover {
+                background: #0f4c81;
+                color: #ffffff;
+                border: 0;
+            }
+        </style>
+        """,
+        unsafe_allow_html=True,
+    )
+
+
+def _render_sidebar() -> None:
+    """Render the project status and developer notes sidebar."""
+    with st.sidebar:
+        st.header("Project Status")
+        st.metric("Version", PROJECT_VERSION)
+        st.success(PROJECT_STATUS)
+
+        st.divider()
+
+        st.header("Developer Notes")
+        st.write(
+            "Initial Streamlit-only prototype. Backboard, memory, assistants, chat, "
+            "and API integrations are intentionally not implemented yet."
+        )
+
+
+def _render_hero() -> None:
+    """Render the homepage hero section."""
+    st.markdown(
+        f"""
+        <div class="hero">
+            <h1>{APP_TITLE}</h1>
+            <h2>{APP_SUBTITLE}</h2>
+            <p>{APP_DESCRIPTION}</p>
+        </div>
+        """,
+        unsafe_allow_html=True,
+    )
+
+
+def _render_feature_cards() -> None:
+    """Render the current three homepage feature cards."""
+    st.markdown('<div class="section-title">Core Capabilities</div>', unsafe_allow_html=True)
+
+    card_1, card_2, card_3 = st.columns(3, gap="large")
+
+    with card_1:
+        st.markdown(
+            """
+            <div class="feature-card">
+                <h3>📍 Report Disaster</h3>
+                <p>
+                    A guided reporting flow will help people share critical incident
+                    details such as location, urgency, needs, and safety conditions.
+                </p>
+            </div>
+            """,
+            unsafe_allow_html=True,
+        )
+
+    with card_2:
+        st.markdown(
+            """
+            <div class="feature-card">
+                <h3>🧠 Persistent Memory</h3>
+                <p>
+                    Future versions will remember important disaster-related context
+                    across conversations to reduce repeated information gathering.
+                </p>
+            </div>
+            """,
+            unsafe_allow_html=True,
+        )
+
+    with card_3:
+        st.markdown(
+            """
+            <div class="feature-card">
+                <h3>🤝 Future Relief Coordination</h3>
+                <p>
+                    The prototype is designed to evolve toward coordinating relief
+                    requests, volunteer response, and resource allocation workflows.
+                </p>
+            </div>
+            """,
+            unsafe_allow_html=True,
+        )
+
+
+def _render_start_button() -> None:
+    """Render the placeholder reporting call-to-action."""
+    st.write("")
+    st.write("")
+
+    if st.button("Start Reporting", type="primary"):
+        st.info("Chat interface coming soon.")
+

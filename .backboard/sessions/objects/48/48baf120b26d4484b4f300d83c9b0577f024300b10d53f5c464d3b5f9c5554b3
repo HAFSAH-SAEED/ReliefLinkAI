@@ -1,0 +1,53 @@
+"""Backboard API client setup for ReliefLink AI.
+
+This module is the single place where the app creates a Backboard SDK client.
+Keeping API setup here protects the rest of the codebase from SDK details and
+makes future assistant, thread, chat, and memory features easier to test.
+"""
+
+from __future__ import annotations
+
+import os
+from dataclasses import dataclass
+
+from backboard import BackboardClient
+
+
+BACKBOARD_API_KEY_ENV = "BACKBOARD_API_KEY"
+
+
+class BackboardConfigurationError(RuntimeError):
+    """Raised when required Backboard configuration is missing or invalid."""
+
+
+@dataclass(frozen=True)
+class BackboardSettings:
+    """Configuration required to initialize the official Backboard SDK client."""
+
+    api_key: str
+
+
+def load_backboard_settings() -> BackboardSettings:
+    """Load Backboard settings from environment variables only.
+
+    The API key is intentionally read only from BACKBOARD_API_KEY so secrets are
+    never hard-coded, checked into source control, or stored in Streamlit state.
+    """
+    api_key = os.getenv(BACKBOARD_API_KEY_ENV, "").strip()
+
+    if not api_key:
+        raise BackboardConfigurationError(
+            f"Missing Backboard API key. Set the {BACKBOARD_API_KEY_ENV} environment variable."
+        )
+
+    return BackboardSettings(api_key=api_key)
+
+
+def create_backboard_client() -> BackboardClient:
+    """Create an authenticated official Backboard SDK client.
+
+    This function does not create assistants, threads, memory, or chat messages.
+    Those behaviors will be added in later phases on top of this service layer.
+    """
+    settings = load_backboard_settings()
+    return BackboardClient(api_key=settings.api_key)
