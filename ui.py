@@ -20,14 +20,15 @@ from services.backboard_client import (
 
 
 def render_homepage(page_config: dict[str, str]) -> None:
-    """Render the Phase 3 humanitarian landing page."""
+    """Render the Field Documentary-themed ReliefLink AI homepage."""
     st.set_page_config(**page_config)
     _render_styles()
     _render_sidebar()
     _render_status_strip()
     _render_hero()
     _render_about_section()
-    _render_feature_cards()
+    _render_capabilities_section()
+    _render_feature_report()
     _render_workflow_section()
     _render_chat_section()
     _render_roadmap_section()
@@ -35,25 +36,25 @@ def render_homepage(page_config: dict[str, str]) -> None:
 
 
 def _render_styles() -> None:
-    """Apply the humanitarian visual system for the landing page."""
+    """Apply the Field Documentary visual system."""
     st.markdown(
         """
         <style>
             :root {
-                --ink: #0b1215;
-                --panel: #101c22;
-                --signal-amber: #f2a341;
-                --relief-teal: #2ea89a;
-                --alert-red: #d94f4f;
-                --paper: #eef2ee;
-                --muted-fog: #7d919a;
+                --sand: #f2ead9;
+                --clay: #b3552f;
+                --olive: #5c6b47;
+                --deep-umber: #3a2a20;
+                --sky-dust: #8fa6a3;
+                --sunlit: #e8a94c;
+                --paper: rgba(242, 234, 217, 0.96);
             }
 
-            @import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap');
+            @import url('https://fonts.googleapis.com/css2?family=Fraunces:wght@500;700;900&family=Inter:wght@400;500;600;700&display=swap');
 
             .stApp {
-                background: var(--paper);
-                color: var(--ink);
+                background: linear-gradient(180deg, #f6efe2 0%, #efe4cf 100%);
+                color: var(--deep-umber);
                 font-family: 'Inter', system-ui, -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
             }
 
@@ -64,115 +65,105 @@ def _render_styles() -> None:
             }
 
             [data-testid="stSidebar"] {
-                background: var(--panel);
+                background: #3a2a20;
+                color: #f7ede0;
             }
 
             [data-testid="stSidebar"] * {
-                color: #eef2ee;
-            }
-
-            .sidebar-brand {
-                display: flex;
-                align-items: flex-start;
-                gap: 0.75rem;
-                margin-bottom: 1.25rem;
-            }
-
-            .sidebar-logo {
-                width: 46px;
-                height: 46px;
-                display: grid;
-                place-items: center;
-                border-radius: 8px;
-                background: rgba(46, 168, 154, 0.16);
-                color: #eef2ee;
-                font-size: 1.1rem;
-                border: 1px solid rgba(255, 255, 255, 0.12);
+                color: #f7ede0;
             }
 
             .sidebar-title {
-                font-size: 1rem;
+                display: inline-flex;
+                align-items: center;
+                gap: 0.65rem;
+                font-size: 1.1rem;
                 font-weight: 800;
-                letter-spacing: 0.02em;
+                letter-spacing: 0.03em;
                 margin-bottom: 0.15rem;
             }
 
-            .sidebar-subtitle {
-                font-size: 0.85rem;
-                color: rgba(255, 255, 255, 0.72);
-            }
-
-            .sidebar-status {
+            .sidebar-logo {
+                width: 28px;
+                height: 28px;
                 display: inline-flex;
                 align-items: center;
-                gap: 0.5rem;
-                padding: 0.7rem 0.9rem;
-                border-radius: 10px;
-                background: rgba(255, 255, 255, 0.06);
-                color: #d2f1eb;
-                font-size: 0.85rem;
-                font-weight: 700;
-                margin-bottom: 1.2rem;
+                justify-content: center;
+                flex-shrink: 0;
             }
 
-            .status-dot {
-                width: 0.55rem;
-                height: 0.55rem;
-                border-radius: 50%;
-                background: var(--relief-teal);
-                box-shadow: 0 0 0 4px rgba(46, 168, 154, 0.15);
+            .sidebar-logo svg {
+                width: 100%;
+                height: 100%;
+            }
+
+            .sidebar-subtitle {
+                color: #d8c5b1;
+                margin-bottom: 1.05rem;
+            }
+
+            .sidebar-chip {
+                display: inline-flex;
+                align-items: center;
+                gap: 0.4rem;
+                padding: 0.65rem 0.85rem;
+                border-radius: 999px;
+                background: rgba(243, 219, 188, 0.16);
+                border: 1px solid rgba(255, 255, 255, 0.12);
+                color: #f7ede0;
+                font-size: 0.85rem;
+                font-weight: 700;
+                margin-bottom: 1rem;
+            }
+
+            .sidebar-divider {
+                border-top: 1px solid rgba(255, 255, 255, 0.12);
+                margin: 1rem 0 1rem 0;
             }
 
             .sidebar-nav-item {
                 display: flex;
                 align-items: center;
                 gap: 0.65rem;
-                padding: 0.7rem 0.85rem;
-                margin: 0.2rem 0;
-                border-radius: 10px;
-                background: rgba(255, 255, 255, 0.04);
-                color: #dbeafe;
+                padding: 0.75rem 0.85rem;
+                border-radius: 12px;
+                margin-bottom: 0.5rem;
+                color: #f7ede0;
                 font-size: 0.95rem;
                 font-weight: 600;
+                background: rgba(255, 255, 255, 0.04);
             }
 
             .sidebar-nav-item:hover {
+                background: rgba(255, 255, 255, 0.08);
                 cursor: pointer;
-                background: rgba(255, 255, 255, 0.09);
             }
 
-            .sidebar-index {
-                font-family: ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, monospace;
-                color: var(--relief-teal);
-                font-size: 0.85rem;
-            }
-
-            .sidebar-footer {
+            .sidebar-meta {
                 margin-top: 1.5rem;
-                padding-top: 1rem;
+                padding-top: 0.9rem;
                 border-top: 1px solid rgba(255, 255, 255, 0.12);
-                color: rgba(255, 255, 255, 0.72);
+                color: #d8c5b1;
                 font-size: 0.88rem;
+                line-height: 1.6;
             }
 
-            .sidebar-version,
-            .sidebar-prototype {
+            .sidebar-meta span {
                 display: block;
-                font-family: ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, monospace;
             }
 
             .status-strip {
-                display: inline-flex;
+                display: flex;
                 flex-wrap: wrap;
-                align-items: center;
-                gap: 0.8rem;
-                padding: 0.9rem 1rem;
-                border-radius: 10px;
-                border: 1px solid rgba(16, 28, 34, 0.12);
-                background: #ffffff;
-                color: var(--ink);
-                font-size: 0.9rem;
-                margin-bottom: 1.4rem;
+                justify-content: space-between;
+                gap: 0.9rem;
+                padding: 1rem 1.2rem;
+                border-radius: 18px;
+                background: rgba(58, 42, 32, 0.08);
+                border: 1px solid rgba(58, 42, 32, 0.12);
+                color: var(--deep-umber);
+                font-size: 0.95rem;
+                margin-bottom: 1.5rem;
             }
 
             .status-strip strong {
@@ -180,366 +171,616 @@ def _render_styles() -> None:
             }
 
             .status-separator {
-                font-family: ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, monospace;
-                color: var(--muted-fog);
+                color: var(--sky-dust);
             }
 
             .hero {
-                padding: clamp(1.8rem, 3vw, 3rem);
-                border-radius: 10px;
-                background: #ffffff;
-                border: 1px solid rgba(16, 28, 34, 0.12);
-                color: var(--ink);
-                margin-bottom: 1.75rem;
-            }
-
-            .hero-grid {
                 display: grid;
-                grid-template-columns: minmax(0, 1.35fr) minmax(260px, 0.75fr);
-                gap: 1.5rem;
-                align-items: center;
+                grid-template-columns: minmax(0, 1.05fr) minmax(320px, 0.95fr);
+                gap: 2rem;
+                padding: 2rem;
+                border-radius: 28px;
+                background: var(--paper);
+                border: 1px solid rgba(58, 42, 32, 0.12);
+                box-shadow: 0 24px 70px rgba(58, 42, 32, 0.08);
+                margin-bottom: 2rem;
             }
 
-            .hero h1 {
-                font-size: clamp(2.7rem, 6vw, 4rem);
-                line-height: 1.05;
-                margin: 0 0 0.55rem 0;
-                letter-spacing: -0.04em;
+            .hero-copy {
+                display: flex;
+                flex-direction: column;
+                justify-content: center;
+                gap: 1rem;
             }
 
-            .hero h2 {
-                font-size: clamp(1.05rem, 2.4vw, 1.5rem);
+            .hero-kicker {
+                font-size: 0.9rem;
                 font-weight: 700;
-                margin: 0 0 1rem 0;
-                color: var(--muted-fog);
+                letter-spacing: 0.2em;
+                text-transform: uppercase;
+                color: var(--clay);
+                margin-bottom: 0.25rem;
             }
 
-            .hero p {
+            .hero-title {
+                font-family: 'Fraunces', Georgia, Cambria, 'Times New Roman', serif;
+                font-size: clamp(2.8rem, 5vw, 4.6rem);
+                line-height: 0.98;
+                margin: 0;
+                color: var(--deep-umber);
+            }
+
+            .hero-subtitle {
+                font-size: 1.1rem;
+                color: var(--deep-umber);
                 max-width: 620px;
-                font-size: 1rem;
-                line-height: 1.75;
-                color: #475569;
-                margin: 0 0 1rem 0;
+                margin: 0;
+                line-height: 1.6;
             }
 
-            .hero-status {
+            .hero-copy p {
+                color: #4a382f;
+                font-size: 1rem;
+                line-height: 1.8;
+                max-width: 660px;
+                margin: 0;
+            }
+
+            .hero-tags {
                 display: flex;
                 flex-wrap: wrap;
-                gap: 0.75rem;
-                margin-bottom: 1rem;
+                gap: 0.8rem;
+                margin-top: 1rem;
             }
 
-            .hero-pill {
-                padding: 0.6rem 0.85rem;
+            .hero-tag {
+                padding: 0.7rem 1rem;
                 border-radius: 999px;
-                background: rgba(46, 168, 154, 0.12);
-                border: 1px solid rgba(46, 168, 154, 0.22);
-                color: var(--relief-teal);
-                font-size: 0.82rem;
+                background: rgba(179, 85, 47, 0.12);
+                color: var(--clay);
                 font-weight: 700;
-                letter-spacing: 0.02em;
-                text-transform: uppercase;
+                font-size: 0.85rem;
+                letter-spacing: 0.08em;
             }
 
-            .hero-pill.alert {
-                background: rgba(217, 79, 79, 0.12);
-                border-color: rgba(217, 79, 79, 0.2);
-                color: var(--alert-red);
+            .hero-image {
+                position: relative;
+                min-height: 420px;
+                border-radius: 24px;
+                background: linear-gradient(0deg, rgba(242, 234, 217, 0.88), rgba(242, 234, 217, 0.88)),
+                    linear-gradient(135deg, #efe4cf 12%, #f7eee0 54%, #e6d1b0 100%);
+                border: 1px solid rgba(58, 42, 32, 0.14);
+                display: grid;
+                place-items: center;
+                color: var(--deep-umber);
+                overflow: hidden;
+                padding: 1.25rem;
             }
 
-            .relief-illustration {
-                min-height: 320px;
-                border-radius: 10px;
-                background: var(--panel);
-                display: flex;
-                align-items: center;
-                justify-content: center;
-                padding: 1.1rem;
+            .hero-map {
+                width: 100%;
+                max-width: 420px;
+                aspect-ratio: 1 / 1;
+                border-radius: 22px;
+                background: #f2ead9;
+                border: 1px solid rgba(58, 42, 32, 0.12);
+                box-shadow: inset 0 0 0 1px rgba(58, 42, 32, 0.04);
+                position: relative;
+                overflow: hidden;
             }
 
-            .relief-illustration svg {
-                width: min(100%, 320px);
-                height: auto;
+            .hero-map::before {
+                content: '';
+                position: absolute;
+                inset: 0;
+                background: radial-gradient(circle at 20% 25%, rgba(255, 255, 255, 0.35), transparent 12%),
+                    radial-gradient(circle at 80% 70%, rgba(255, 249, 227, 0.35), transparent 12%);
+                opacity: 0.7;
             }
 
-            .section {
-                margin: 2rem 0;
-                padding: clamp(1.4rem, 3vw, 2.2rem);
-                border-radius: 10px;
-                background: #ffffff;
-                border: 1px solid rgba(16, 28, 34, 0.12);
+            .hero-map .terrain-line,
+            .hero-map .water-line {
+                position: absolute;
+                width: 240px;
+                height: 240px;
+                border-radius: 999px;
+                border: 1px solid rgba(58, 42, 32, 0.08);
+                left: 18%;
+                top: 16%;
             }
 
-            .section-soft {
-                background: #f4f6f4;
+            .hero-map .water-line {
+                border-color: rgba(143, 166, 163, 0.24);
             }
 
-            .section-title {
-                color: var(--ink);
-                font-size: clamp(1.5rem, 3vw, 2rem);
-                font-weight: 700;
-                letter-spacing: -0.03em;
-                margin: 0 0 0.75rem 0;
+            .hero-map .path {
+                position: absolute;
+                width: 110%;
+                height: 110%;
+                left: -5%;
+                top: -4%;
+                background: radial-gradient(circle at 65% 76%, transparent 12px, rgba(255, 255, 255, 0.68) 14px, transparent 18px);
             }
 
-            .section-kicker {
-                color: var(--relief-teal);
-                font-size: 0.84rem;
-                font-weight: 800;
-                letter-spacing: 0.12em;
-                text-transform: uppercase;
-                margin-bottom: 0.55rem;
+            .hero-map svg {
+                position: relative;
+                width: 100%;
+                height: 100%;
             }
 
-            .section-copy {
-                color: var(--muted-fog);
-                font-size: 1rem;
-                line-height: 1.75;
-                max-width: 780px;
+            .hero-map .pulse {
+                animation: pulse 3s ease-out infinite;
+                transform-origin: center;
+                transform-box: fill-box;
             }
 
-            .feature-grid {
+            .hero-title,
+            .hero-subtitle,
+            .hero-tags {
+                opacity: 0;
+                transform: translateY(8px);
+                animation: fade-up 400ms ease-out forwards;
+            }
+
+            .hero-title {
+                animation-delay: 0ms;
+            }
+
+            .hero-subtitle {
+                animation-delay: 100ms;
+            }
+
+            .hero-tags {
+                animation-delay: 200ms;
+            }
+
+            @media (prefers-reduced-motion: reduce) {
+                .hero-map .pulse,
+                .hero-title,
+                .hero-subtitle,
+                .hero-tags {
+                    animation: none !important;
+                    transform: none !important;
+                    opacity: 1 !important;
+                }
+            }
+
+            @keyframes fade-up {
+                from {
+                    opacity: 0;
+                    transform: translateY(8px);
+                }
+                to {
+                    opacity: 1;
+                    transform: translateY(0);
+                }
+            }
+
+            @keyframes pulse {
+                0% {
+                    transform: scale(1);
+                    opacity: 0.7;
+                }
+                50% {
+                    transform: scale(1.18);
+                    opacity: 0.24;
+                }
+                100% {
+                    transform: scale(1);
+                    opacity: 0.7;
+                }
+            }
+
+            .timeline {
                 display: grid;
                 grid-template-columns: repeat(4, minmax(0, 1fr));
                 gap: 1rem;
                 margin-top: 1.4rem;
+                counter-reset: step;
+                min-width: 0;
+                width: 100%;
+                box-sizing: border-box;
             }
 
-            .feature-card {
-                min-height: 170px;
-                padding: 1.2rem;
-                border-radius: 6px;
-                background: #ffffff;
-                border: 1px solid rgba(16, 28, 34, 0.12);
+            .timeline-step {
+                position: relative;
+                display: grid;
+                grid-template-columns: 42px minmax(0, 1fr);
+                gap: 1rem;
+                padding: 1.3rem 1.4rem;
+                border-radius: 18px;
+                background: rgba(255, 255, 255, 0.95);
+                border: 1px solid rgba(58, 42, 32, 0.08);
+                min-width: 0;
+                max-width: none;
+                box-sizing: border-box;
+                overflow-wrap: normal !important;
+                word-break: normal !important;
+                hyphens: none !important;
             }
 
-            .feature-card h3 {
-                color: var(--ink);
+            .timeline-step > * {
+                min-width: 0;
+                width: 100%;
+                max-width: none;
+                box-sizing: border-box;
+            }
+
+            .timeline-step:not(:last-child)::after {
+                content: '';
+                position: absolute;
+                top: 50%;
+                right: -16px;
+                width: 32px;
+                height: 1px;
+                background: rgba(58, 42, 32, 0.12);
+                transform: translateY(-50%);
+            }
+
+            .timeline-step::before {
+                content: counter(step);
+                counter-increment: step;
+                display: inline-flex;
+                align-items: center;
+                justify-content: center;
+                width: 40px;
+                height: 40px;
+                border-radius: 50%;
+                background: var(--sand);
+                color: var(--deep-umber);
+                font-weight: 800;
+                border: 1px solid rgba(58, 42, 32, 0.1);
+            }
+
+            .timeline-step h3 {
+                margin: 0 0 0.45rem 0;
+                color: var(--deep-umber);
                 font-size: 1rem;
-                margin-bottom: 0.65rem;
-                letter-spacing: -0.01em;
             }
 
+            .timeline-step p {
+                margin: 0;
+                color: #5c4d3d;
+                line-height: 1.75;
+                font-size: 0.96rem;
+                width: 100%;
+                max-width: none;
+                white-space: normal !important;
+                overflow-wrap: normal !important;
+                word-break: normal !important;
+            }
+
+            .timeline-connector {
+                display: block;
+                position: relative;
+                height: 100%;
+            }
+
+            .timeline-connector::after {
+                content: '';
+                position: absolute;
+                left: 50%;
+                top: 0;
+                bottom: 0;
+                width: 1px;
+                background: rgba(58, 42, 32, 0.08);
+                transform: translateX(-50%);
+            }
+
+            .timeline-row {
+                display: grid;
+                grid-template-columns: repeat(2, minmax(0, 1fr));
+                gap: 1rem;
+            }
+
+            @media (max-width: 980px) {
+                .timeline {
+                    grid-template-columns: repeat(2, minmax(220px, 1fr));
+                }
+            }
+
+            @media (max-width: 640px) {
+                .hero {
+                    grid-template-columns: 1fr;
+                }
+
+                .timeline {
+                    grid-template-columns: 1fr;
+                }
+
+                .timeline-step:not(:last-child)::after {
+                    display: none;
+                }
+
+                .timeline-step {
+                    grid-template-columns: 42px minmax(0, 1fr);
+                }
+            }
+
+            .section {
+                margin: 2rem 0;
+                padding: 2rem;
+                border-radius: 24px;
+                background: rgba(255, 255, 255, 0.88);
+                border: 1px solid rgba(58, 42, 32, 0.12);
+            }
+
+            .section-soft {
+                background: rgba(242, 234, 217, 0.9);
+            }
+
+            .section-title {
+                font-family: 'Fraunces', Georgia, Cambria, 'Times New Roman', serif;
+                font-size: clamp(1.8rem, 3vw, 2.4rem);
+                margin: 0 0 0.85rem 0;
+                color: var(--deep-umber);
+                line-height: 1.1;
+            }
+
+            .section-copy {
+                color: #4a382f;
+                font-size: 1rem;
+                line-height: 1.8;
+                margin: 0;
+                max-width: 780px;
+            }
+
+            .capability-grid,
+            .feature-grid {
+                display: grid;
+                gap: 1rem;
+                grid-template-columns: repeat(2, minmax(0, 1fr));
+                margin-top: 1.4rem;
+            }
+
+            .capability-card,
+            .feature-card {
+                padding: 1.35rem;
+                border-radius: 18px;
+                background: rgba(255, 255, 255, 0.95);
+                border: 1px solid rgba(58, 42, 32, 0.08);
+                min-height: 170px;
+                display: flex;
+                flex-direction: column;
+                justify-content: space-between;
+            }
+
+            .capability-card h3,
+            .feature-card h3 {
+                color: var(--deep-umber);
+                font-size: 1.1rem;
+                margin: 0 0 0.65rem 0;
+            }
+
+            .capability-card p,
             .feature-card p {
-                color: #475569;
-                line-height: 1.7;
+                color: #5c4d3d;
+                font-size: 0.98rem;
+                line-height: 1.75;
                 margin: 0;
             }
 
-            .workflow {
-                display: grid;
-                grid-template-columns: repeat(4, minmax(0, 1fr));
-                gap: 0.85rem;
-                margin-top: 1.4rem;
-            }
-
-            .workflow-step {
-                padding: 1rem;
-                border-radius: 6px;
-                background: #f4f6f4;
-                border: 1px solid rgba(16, 28, 34, 0.12);
-                text-align: center;
-                color: var(--ink);
+            .feature-mark {
+                display: inline-flex;
+                align-items: center;
+                justify-content: center;
+                width: 40px;
+                height: 40px;
+                border-radius: 12px;
+                background: rgba(179, 85, 47, 0.12);
+                color: var(--clay);
                 font-weight: 700;
-                letter-spacing: 0.01em;
-                position: relative;
-            }
-
-            .workflow-step:not(:last-child)::after {
-                content: '→';
-                position: absolute;
-                right: -0.65rem;
-                top: 50%;
-                transform: translateY(-50%);
-                color: var(--muted-fog);
                 font-size: 1rem;
-            }
-
-            .roadmap {
-                display: grid;
-                grid-template-columns: repeat(5, minmax(0, 1fr));
-                gap: 0.85rem;
-                margin-top: 1.4rem;
-            }
-
-            .roadmap-item {
-                padding: 1.1rem;
-                border-radius: 6px;
-                background: #ffffff;
-                border: 1px solid rgba(16, 28, 34, 0.12);
-                color: var(--ink);
-                font-weight: 700;
-                min-height: 110px;
-            }
-
-            .roadmap-item span {
-                display: block;
-                margin-top: 0.55rem;
-                color: var(--muted-fog);
-                font-size: 0.9rem;
-                font-weight: 600;
-            }
-
-            .roadmap-complete {
-                border-color: rgba(46, 168, 154, 0.28);
-                background: rgba(46, 168, 154, 0.08);
-            }
-
-            .roadmap-live {
-                border-color: rgba(242, 163, 65, 0.28);
-                background: rgba(242, 163, 65, 0.08);
-            }
-
-            .roadmap-next {
-                border-color: rgba(16, 28, 34, 0.18);
-                background: #f7f7f7;
-            }
-
-            .roadmap-future {
-                border-color: rgba(125, 145, 154, 0.2);
-                background: #fafafa;
+                margin-bottom: 0.9rem;
             }
 
             .chat-section {
+                padding: 2rem;
+                border-radius: 24px;
+                background: rgba(242, 234, 217, 0.96);
+                border: 1px solid rgba(58, 42, 32, 0.12);
                 margin: 2rem 0;
-                padding: clamp(1.4rem, 3vw, 2.4rem);
-                border-radius: 10px;
-                background: #f4f6f4;
-                border: 1px solid rgba(16, 28, 34, 0.12);
-                position: relative;
-                padding-bottom: 5rem;
             }
 
             .chat-header {
                 display: flex;
                 flex-wrap: wrap;
                 justify-content: space-between;
-                align-items: center;
+                align-items: flex-start;
                 gap: 1rem;
                 margin-bottom: 1rem;
             }
 
-            .chat-header-title {
-                font-size: 1.1rem;
-                font-weight: 700;
-                color: var(--ink);
+            .chat-title {
+                margin: 0;
+                font-family: 'Fraunces', Georgia, Cambria, 'Times New Roman', serif;
+                font-size: clamp(1.7rem, 3vw, 2.4rem);
+                color: var(--deep-umber);
+                line-height: 1.05;
             }
 
-            .chat-header-status {
+            .chat-subtitle {
+                margin: 0.35rem 0 0 0;
+                color: #5c4d3d;
+                font-size: 1rem;
+                line-height: 1.75;
+                max-width: 680px;
+            }
+
+            .chat-status {
                 display: inline-flex;
                 align-items: center;
-                gap: 0.55rem;
-                padding: 0.55rem 0.85rem;
+                gap: 0.5rem;
+                padding: 0.65rem 0.9rem;
                 border-radius: 999px;
-                background: rgba(46, 168, 154, 0.12);
-                border: 1px solid rgba(46, 168, 154, 0.18);
-                color: var(--relief-teal);
-                font-size: 0.82rem;
+                background: rgba(91, 107, 71, 0.14);
+                border: 1px solid rgba(91, 107, 71, 0.2);
+                color: var(--olive);
+                font-size: 0.85rem;
                 font-weight: 700;
                 text-transform: uppercase;
             }
 
             .chat-helper {
-                color: var(--muted-fog);
-                font-size: 0.95rem;
-                line-height: 1.7;
-                margin-bottom: 1rem;
-                max-width: 750px;
+                color: #5c4d3d;
+                font-size: 1rem;
+                line-height: 1.75;
+                margin-bottom: 1.5rem;
             }
 
             [data-testid="stChatMessage"] {
-                border-radius: 10px;
-                padding: 0.55rem 0.85rem;
-                background: #ffffff;
-                border: 1px solid rgba(16, 28, 34, 0.12);
-                color: var(--ink) !important;
+                border-radius: 18px;
+                padding: 0.85rem 1rem;
+                background: #fbf4e8;
+                border: 1px solid rgba(58, 42, 32, 0.08);
+                color: var(--deep-umber) !important;
             }
 
             [data-testid="stChatMessage"] * {
-                color: var(--ink) !important;
+                color: var(--deep-umber) !important;
             }
 
             [data-testid="stChatMessage"] p,
             [data-testid="stChatMessage"] div,
             [data-testid="stChatMessage"] span,
             [data-testid="stChatMessage"] li {
-                color: var(--ink) !important;
-            }
-
-            [data-testid="stChatInput"] {
-                position: relative !important;
-                z-index: 1;
-                margin-top: 1rem;
+                color: var(--deep-umber) !important;
             }
 
             [data-testid="stChatInput"] textarea {
-                background: var(--panel) !important;
-                border: 1px solid rgba(255, 255, 255, 0.08) !important;
-                color: #eef2ee !important;
-                caret-color: #eef2ee !important;
+                background: #3a2a20 !important;
+                border: 1px solid rgba(255, 255, 255, 0.12) !important;
+                color: #f7ede0 !important;
+                caret-color: #f7ede0 !important;
             }
 
             [data-testid="stChatInput"] textarea::placeholder {
-                color: rgba(255, 255, 255, 0.72) !important;
+                color: #d8c5b1 !important;
                 opacity: 1;
             }
 
             [data-testid="stChatInput"] button {
-                color: #eef2ee !important;
+                color: #f7ede0 !important;
+            }
+
+            .roadmap-list {
+                display: grid;
+                gap: 1rem;
+                margin-top: 1.4rem;
+            }
+
+            .roadmap-item {
+                padding: 1.2rem 1.3rem;
+                border-radius: 18px;
+                background: #ffffff;
+                border: 1px solid rgba(58, 42, 32, 0.08);
+                display: grid;
+                gap: 0.45rem;
+            }
+
+            .roadmap-item strong {
+                color: var(--deep-umber);
+                font-size: 1rem;
+                font-weight: 800;
+            }
+
+            .roadmap-item span {
+                color: #5c4d3d;
+                font-size: 0.95rem;
+            }
+
+            .roadmap-label {
+                display: inline-flex;
+                align-items: center;
+                justify-content: center;
+                width: fit-content;
+                padding: 0.4rem 0.75rem;
+                border-radius: 999px;
+                font-size: 0.82rem;
+                font-weight: 700;
+                color: #ffffff;
+                transition: transform 150ms ease, box-shadow 150ms ease;
+                transform-origin: center;
+            }
+
+            .roadmap-label:hover {
+                transform: scale(1.03);
+            }
+
+            .status-complete {
+                background: var(--olive);
+            }
+
+            .status-live {
+                background: var(--clay);
+            }
+
+            .status-next {
+                background: #8fa6a3;
+            }
+
+            .status-future {
+                background: rgba(58, 42, 32, 0.18);
             }
 
             .footer {
                 margin-top: 2rem;
                 padding: 1.5rem;
                 text-align: center;
-                color: var(--muted-fog);
-                border-top: 1px solid rgba(16, 28, 34, 0.12);
+                color: #5c4d3d;
                 font-weight: 600;
+                border-top: 1px solid rgba(58, 42, 32, 0.12);
             }
 
             .stButton > button {
-                background: var(--relief-teal);
+                background: var(--clay);
                 border: 0;
-                color: #ffffff;
+                color: #fff;
                 border-radius: 999px;
                 padding: 0.85rem 1.6rem;
                 font-weight: 700;
-                box-shadow: none;
             }
 
             .stButton > button:hover {
-                background: #278f82;
-                color: #ffffff;
-                border: 0;
+                background: #9b4f2d;
             }
 
-            @media (max-width: 900px) {
-                .hero-grid,
-                .workflow,
-                .roadmap,
-                .feature-grid {
+            @media (max-width: 980px) {
+                .hero,
+                .capability-grid,
+                .feature-grid,
+                .roadmap-list {
                     grid-template-columns: 1fr;
                 }
 
-                .workflow-step:not(:last-child)::after {
-                    right: 50%;
-                    top: auto;
-                    bottom: -1.2rem;
-                    transform: translateX(50%);
+                .timeline {
+                    grid-template-columns: repeat(2, minmax(220px, 1fr));
+                }
+
+                .hero {
+                    grid-template-columns: 1fr;
+                }
+
+                .timeline-step:not(:last-child)::after {
+                    display: none;
                 }
             }
 
             @media (max-width: 640px) {
                 .hero {
-                    padding: 1.4rem 1rem;
+                    padding: 1.5rem;
                 }
 
-                .hero h1 {
-                    font-size: 2.4rem;
+                .hero-title {
+                    font-size: 2.6rem;
                 }
 
                 .sidebar-nav-item {
                     padding: 0.65rem 0.75rem;
+                }
+
+                .timeline {
+                    grid-template-columns: 1fr;
                 }
             }
         </style>
@@ -549,53 +790,47 @@ def _render_styles() -> None:
 
 
 def _render_sidebar() -> None:
-    """Render the ReliefLink AI product sidebar."""
+    """Render the ReliefLink AI sidebar in the field documentary style."""
     with st.sidebar:
         st.markdown(
             """
-            <div class="sidebar-brand">
-                <div class="sidebar-logo">✚</div>
-                <div>
-                    <div class="sidebar-title">ReliefLink AI</div>
-                    <div class="sidebar-subtitle">Disaster Response</div>
+            <div>
+                <div class="sidebar-title">
+                    <span class="sidebar-logo" aria-hidden="true">
+                        <svg viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+                            <circle cx="12" cy="9" r="3" fill="#b3552f" />
+                            <path d="M12 2C8.134 2 5 5.134 5 9c0 4.25 5.5 11 7 13 1.5-2 7-8.75 7-13 0-3.866-3.134-7-7-7Z" fill="none" stroke="#b3552f" stroke-width="1.8" />
+                            <circle cx="12" cy="9" r="6.5" stroke="#b3552f" stroke-width="1.1" opacity="0.35" />
+                        </svg>
+                    </span>
+                    <span>ReliefLink AI</span>
                 </div>
+                <div class="sidebar-subtitle">Disaster Response</div>
+                <div class="sidebar-chip">SYSTEM ONLINE</div>
             </div>
             """,
             unsafe_allow_html=True,
         )
 
-        st.markdown(
-            """
-            <div class="sidebar-status">
-                <span class="status-dot"></span>
-                SYSTEM ONLINE
-            </div>
-            """,
-            unsafe_allow_html=True,
-        )
-
-        st.divider()
-
+        st.markdown('<div class="sidebar-divider"></div>', unsafe_allow_html=True)
         st.markdown("### Navigation")
-
         st.markdown(
             """
-            <div class="sidebar-nav-item"><span class="sidebar-index">01</span> Overview</div>
-            <div class="sidebar-nav-item"><span class="sidebar-index">AI</span> AI Assistant</div>
-            <div class="sidebar-nav-item"><span class="sidebar-index">MEM</span> Memory</div>
-            <div class="sidebar-nav-item"><span class="sidebar-index">RP</span> Reporting</div>
-            <div class="sidebar-nav-item"><span class="sidebar-index">RM</span> Roadmap</div>
+            <div class="sidebar-nav-item"><span>Overview</span></div>
+            <div class="sidebar-nav-item"><span>AI Assistant</span></div>
+            <div class="sidebar-nav-item"><span>Memory</span></div>
+            <div class="sidebar-nav-item"><span>Reporting</span></div>
+            <div class="sidebar-nav-item"><span>Roadmap</span></div>
             """,
             unsafe_allow_html=True,
         )
 
-        st.divider()
-
+        st.markdown('<div class="sidebar-divider"></div>', unsafe_allow_html=True)
         st.markdown(
             f"""
-            <div class="sidebar-footer">
-                <div class="sidebar-version">v{PROJECT_VERSION}</div>
-                <div class="sidebar-prototype">{PROJECT_STATUS}</div>
+            <div class="sidebar-meta">
+                <span>Version {PROJECT_VERSION}</span>
+                <span>{PROJECT_STATUS}</span>
             </div>
             """,
             unsafe_allow_html=True,
@@ -603,16 +838,15 @@ def _render_sidebar() -> None:
 
 
 def _render_status_strip() -> None:
-    """Render the instrument-style application status strip."""
+    """Render the warm field report status strip."""
     st.markdown(
         """
         <div class="status-strip">
-            <span class="status-dot"></span>
-            <strong>SYSTEM ONLINE</strong>
-            <span class="status-separator">·</span>
-            <span>LAST SYNC 00:02:14</span>
-            <span class="status-separator">·</span>
-            <span>MEMORY: ACTIVE</span>
+            <div><strong>Status:</strong> Field report mode</div>
+            <div class="status-separator">•</div>
+            <div>Last sync 00:02:14</div>
+            <div class="status-separator">•</div>
+            <div>Memory active</div>
         </div>
         """,
         unsafe_allow_html=True,
@@ -620,75 +854,131 @@ def _render_status_strip() -> None:
 
 
 def _render_hero() -> None:
-    """Render the homepage hero section."""
+    """Render the Field Documentary hero section."""
     st.markdown(
         f"""
-        <div class="hero">
-            <div class="hero-grid">
-                <div>
-                    <div class="section-kicker">Field operations console</div>
-                    <h1>{APP_TITLE}</h1>
-                    <h2>{APP_SUBTITLE}</h2>
-                    <div class="hero-status">
-                        <div class="hero-pill">AI ASSISTANT ONLINE</div>
-                        <div class="hero-pill">MEMORY ACTIVE</div>
-                    </div>
-                    <p>
-                        ReliefLink AI helps first responders report urgent incidents with calm,
-                        operational guidance and situational context.
-                    </p>
-                </div>
-                <div class="relief-illustration">
-                    {_relief_svg()}
+        <section class="hero">
+            <div class="hero-copy">
+                <div class="hero-kicker">Field documentary report</div>
+                <h1 class="hero-title">{APP_TITLE}</h1>
+                <p class="hero-subtitle">{APP_SUBTITLE}</p>
+                <p>{APP_DESCRIPTION}</p>
+                <div class="hero-tags">
+                    <span class="hero-tag">humanitarian</span>
+                    <span class="hero-tag">field reporting</span>
+                    <span class="hero-tag">memory-aware</span>
                 </div>
             </div>
-        </div>
+            <div class="hero-image">
+                <div class="hero-map" role="img" aria-label="Map-inspired field coordination illustration showing terrain, water areas, a rescue point, and a route.">
+                    <div class="terrain-line"></div>
+                    <div class="water-line"></div>
+                    <svg viewBox="0 0 320 320" aria-hidden="true" role="img">
+                        <path d="M48 240 C92 216 110 148 162 137 C218 126 260 88 276 56" fill="none" stroke="#8fa6a3" stroke-width="3" stroke-linecap="round" opacity="0.72"/>
+                        <path d="M48 158 C86 150 118 162 154 180 C186 196 210 218 240 228" fill="none" stroke="#8fa6a3" stroke-width="3" stroke-linecap="round" opacity="0.6"/>
+                        <path d="M120 82 C132 88 150 87 164 82" fill="none" stroke="#5c6b47" stroke-width="4" stroke-linecap="round" opacity="0.9"/>
+                        <circle cx="180" cy="132" r="22" fill="#b3552f" opacity="0.96"/>
+                        <circle cx="180" cy="132" r="10" fill="#f2ead9"/>
+                        <path d="M174 152 L178 172 L182 152" stroke="#3a2a20" stroke-width="3" stroke-linecap="round"/>
+                        <circle class="pulse" cx="180" cy="132" r="34" fill="none" stroke="rgba(179, 85, 47, 0.24)" stroke-width="3"/>
+                        <circle cx="82" cy="232" r="12" fill="#5c6b47" opacity="0.9"/>
+                        <path d="M84 226 L94 218 L100 232" fill="none" stroke="#fff8ec" stroke-width="3" stroke-linecap="round"/>
+                    </svg>
+                </div>
+            </div>
+        </section>
         """,
         unsafe_allow_html=True,
     )
 
 
 def _render_about_section() -> None:
-    """Render the landing page about section."""
-    st.markdown(
-        """
-        <section class="section">
-            <div class="section-kicker">Operations brief</div>
-            <h2 class="section-title">Mission-ready incident reporting</h2>
-            <p class="section-copy">
-                ReliefLink AI is built to support faster, clearer disaster reporting during floods,
-                medical emergencies, displacement, and infrastructure failures. The interface
-                is designed to feel calm, precise, and reliable.
-            </p>
-        </section>
-        """,
-        unsafe_allow_html=True,
-    )
-
-
-def _render_feature_cards() -> None:
-    """Render professional feature cards for the landing page."""
+    """Render the prototype introduction as a field report."""
     st.markdown(
         """
         <section class="section section-soft">
-            <div class="section-kicker">Core capabilities</div>
-            <h2 class="section-title">Operational features available now</h2>
+            <div class="section-kicker">About the prototype</div>
+            <h2 class="section-title">A quiet, grounded approach to relief reporting</h2>
             <p class="section-copy">
-                These modules describe the current console capabilities and planned next steps.
+                ReliefLink AI is built to help field teams collect urgent disaster information
+                with dignity and clarity. The experience is designed to feel like a trusted
+                field report — warm, human, and focused on the people and places that need help.
             </p>
         </section>
         """,
         unsafe_allow_html=True,
     )
 
-    card_1, card_2, card_3, card_4 = st.columns(4, gap="large")
+
+def _render_capabilities_section() -> None:
+    """Render the platform capability overview."""
+    st.markdown(
+        """
+        <section class="section">
+            <div class="section-kicker">Platform capabilities</div>
+            <h2 class="section-title">Built for resilient reporting and humanitarian context</h2>
+            <p class="section-copy">
+                The current prototype brings together AI-assisted incident capture, persistent
+                memory, and future coordination support for on-the-ground responders.
+            </p>
+            <div class="capability-grid">
+                <div class="capability-card">
+                    <h3>Report disaster events</h3>
+                    <p>Capture what happened, where it happened, and what kind of support is needed.</p>
+                </div>
+                <div class="capability-card">
+                    <h3>Persistent AI memory</h3>
+                    <p>Keep conversation context across exchanges so the assistant stays aligned
+                    with ongoing relief priorities.</p>
+                </div>
+                <div class="capability-card">
+                    <h3>Situation awareness</h3>
+                    <p>Turn unstructured field details into clearer, response-ready updates.</p>
+                </div>
+                <div class="capability-card">
+                    <h3>NGO coordination</h3>
+                    <p>Prepare the groundwork for later integrations with relief partners and teams.</p>
+                </div>
+            </div>
+        </section>
+        """,
+        unsafe_allow_html=True,
+    )
+
+
+def _render_feature_report() -> None:
+    """Render the feature grid as a field report summary."""
+    st.markdown(
+        """
+        <section class="section section-soft">
+            <div class="section-kicker">Feature summary</div>
+            <h2 class="section-title">What ReliefLink AI does today</h2>
+        </section>
+        """,
+        unsafe_allow_html=True,
+    )
+
+    card_1, card_2 = st.columns(2, gap="large")
 
     with card_1:
         st.markdown(
             """
             <div class="feature-card">
-                <h3>AI Disaster Assistant</h3>
-                <p>Guided incident reporting that turns urgent events into clear updates.</p>
+                <div class="feature-mark">?</div>
+                <h3>Report Disaster</h3>
+                <p>Document urgent incidents clearly so response teams can act quickly.</p>
+            </div>
+            """,
+            unsafe_allow_html=True,
+        )
+
+        st.markdown(
+            """
+            <div class="feature-card">
+                <div class="feature-mark">?</div>
+                <h3>Persistent AI Memory</h3>
+                <p>Hold onto important details across the conversation for continuity.
+                </p>
             </div>
             """,
             unsafe_allow_html=True,
@@ -698,30 +988,22 @@ def _render_feature_cards() -> None:
         st.markdown(
             """
             <div class="feature-card">
-                <h3>Persistent AI Memory</h3>
-                <p>Maintains context across the session so the assistant stays aligned.</p>
-            </div>
-            """,
-            unsafe_allow_html=True,
-        )
-
-    with card_3:
-        st.markdown(
-            """
-            <div class="feature-card">
-                <h3>Structured Reporting</h3>
-                <p>Converts free-form details into concise response-ready incident summaries.</p>
-            </div>
-            """,
-            unsafe_allow_html=True,
-        )
-
-    with card_4:
-        st.markdown(
-            """
-            <div class="feature-card">
+                <div class="feature-mark">?</div>
                 <h3>Future NGO Coordination</h3>
-                <p>Planned integrations that connect relief organizations and field teams.</p>
+                <p>Create a foundation for future relief partner workflows and shared response.
+                </p>
+            </div>
+            """,
+            unsafe_allow_html=True,
+        )
+
+        st.markdown(
+            """
+            <div class="feature-card">
+                <div class="feature-mark">??</div>
+                <h3>Better Situation Awareness</h3>
+                <p>Transform descriptions into actionable context that supports field decisions.
+                </p>
             </div>
             """,
             unsafe_allow_html=True,
@@ -729,20 +1011,29 @@ def _render_feature_cards() -> None:
 
 
 def _render_workflow_section() -> None:
-    """Render the horizontal disaster-reporting workflow preview."""
+    """Render the workflow as an editorial field-response timeline."""
     st.markdown(
         """
         <section class="section">
-            <div class="section-kicker">Workflow</div>
-            <h2 class="section-title">Describe ? Understand ? Remember ? Coordinate</h2>
-            <p class="section-copy">
-                This sequence shows the operational path from first report to sustained response.
-            </p>
-            <div class="workflow">
-                <div class="workflow-step">Describe</div>
-                <div class="workflow-step">Understand</div>
-                <div class="workflow-step">Remember</div>
-                <div class="workflow-step">Coordinate</div>
+            <div class="section-kicker">How it works</div>
+            <h2 class="section-title">From first report to sustained coordination</h2>
+            <div class="timeline">
+                <div class="timeline-step">
+                    <h3>Report Situation</h3>
+                    <p>Describe the incident as you see it on the ground.</p>
+                </div>
+                <div class="timeline-step">
+                    <h3>AI Understands Context</h3>
+                    <p>The assistant reads the situation and responds with clarity.</p>
+                </div>
+                <div class="timeline-step">
+                    <h3>Remembers Important Information</h3>
+                    <p>Key details stay available across the conversation.</p>
+                </div>
+                <div class="timeline-step">
+                    <h3>Future Relief Coordination</h3>
+                    <p>Build toward better handoff and shared response with aid partners.</p>
+                </div>
             </div>
         </section>
         """,
@@ -751,28 +1042,24 @@ def _render_workflow_section() -> None:
 
 
 def _render_chat_section() -> None:
-    """Render the Streamlit chat UI and send messages to Backboard.
-
-    Streamlit reruns the script after each user interaction, so the assistant,
-    fresh thread, and visible chat history are stored in st.session_state. This
-    creates one thread for the user's current app session while preserving the
-    existing persistent assistant from reliefLink.json.
-    """
+    """Render the Streamlit chat UI and preserve Backboard chat behavior."""
     st.markdown(
         """
         <section class="chat-section">
             <div class="chat-header">
-                <div class="chat-header-title">ReliefLink Communications</div>
-                <div class="chat-header-status">
-                    <span class="status-dot"></span>
-                    ACTIVE
+                <div>
+                    <div class="hero-kicker">Start a relief conversation</div>
+                    <h1 class="chat-title">Report with care and clarity</h1>
+                    <p class="chat-subtitle">
+                        Share the situation in plain language, and ReliefLink AI will reply using
+                        the existing Backboard-powered assistant and session memory.
+                    </p>
                 </div>
+                <div class="chat-status">Active conversation</div>
             </div>
-            <div class="section-kicker">AI Chat</div>
-            <h2 class="section-title">Report the incident in plain language</h2>
             <p class="chat-helper">
-                Share what happened, where you are, and what help is needed. ReliefLink AI
-                will respond using the persistent Backboard assistant with memory enabled.
+                Continue using the working assistant. This chat panel remains connected to the
+                same thread and memory logic as before.
             </p>
         </section>
         """,
@@ -813,13 +1100,7 @@ def _render_chat_section() -> None:
 
 
 def _initialize_chat_session() -> bool:
-    """Load the persistent assistant and create one fresh in-memory thread.
-
-    The assistant is reused from reliefLink.json. The thread is created once per
-    Streamlit browser session and never saved to disk, which keeps each app
-    session separate while still allowing Backboard memory to work through the
-    persistent assistant.
-    """
+    """Load the persistent assistant and create one fresh in-memory thread."""
     if "relief_chat_messages" not in st.session_state:
         st.session_state.relief_chat_messages = []
 
@@ -840,18 +1121,27 @@ def _initialize_chat_session() -> bool:
 
 
 def _render_roadmap_section() -> None:
-    """Render the future product roadmap timeline."""
+    """Render the editorial roadmap timeline."""
+    roadmap_items = [
+        ("Phase 1 — Interface", "✓ DONE", "status-complete"),
+        ("Phase 2 — Disaster Reporting", "✓ DONE", "status-complete"),
+        ("Phase 3 — AI Assistant", "→ ✓ DONE", "status-complete"),
+        ("Phase 4 — Persistent Memory", "→ ✓ DONE", "status-complete"),
+        ("Phase 5 — NGO Integration", "→ SOON", "status-live"),
+    ]
+
+    roadmap_html = "\n".join(
+        f"<div class=\"roadmap-item\"><strong>{title}</strong><span class=\"roadmap-label {status}\">{label}</span></div>"
+        for title, label, status in roadmap_items
+    )
+
     st.markdown(
-        """
+        f"""
         <section class="section section-soft">
             <div class="section-kicker">Roadmap</div>
             <h2 class="section-title">Current status and next phases</h2>
-            <div class="roadmap">
-                <div class="roadmap-item roadmap-complete">Phase 1 – Interface<span>COMPLETE</span></div>
-                <div class="roadmap-item roadmap-live">Phase 2 – AI Assistant<span>LIVE</span></div>
-                <div class="roadmap-item roadmap-live">Phase 3 – Persistent Memory<span>LIVE</span></div>
-                <div class="roadmap-item roadmap-next">Phase 4 – Disaster Reporting<span>NEXT</span></div>
-                <div class="roadmap-item roadmap-future">Phase 5 – NGO Integration<span>FUTURE</span></div>
+            <div class="roadmap-list">
+                {roadmap_html}
             </div>
         </section>
         """,
@@ -860,7 +1150,7 @@ def _render_roadmap_section() -> None:
 
 
 def _render_footer() -> None:
-    """Render the landing page footer."""
+    """Render the homepage footer."""
     st.markdown(
         """
         <footer class="footer">
@@ -869,30 +1159,3 @@ def _render_footer() -> None:
         """,
         unsafe_allow_html=True,
     )
-
-
-def _relief_svg() -> str:
-    """Return inline open SVG artwork for humanitarian relief."""
-    return """
-    <svg viewBox="0 0 420 420" role="img" aria-label="Operations radar illustration" xmlns="http://www.w3.org/2000/svg">
-        <defs>
-            <linearGradient id="bg" x1="0" y1="0" x2="1" y2="1">
-                <stop offset="0" stop-color="#101c22"/>
-                <stop offset="1" stop-color="#0e1620"/>
-            </linearGradient>
-        </defs>
-        <rect x="10" y="10" width="400" height="400" rx="18" fill="url(#bg)"/>
-        <circle cx="210" cy="210" r="128" fill="none" stroke="#2ea89a" stroke-width="6" opacity="0.2"/>
-        <circle cx="210" cy="210" r="88" fill="none" stroke="#2ea89a" stroke-width="4" opacity="0.18"/>
-        <circle cx="210" cy="210" r="44" fill="none" stroke="#2ea89a" stroke-width="3" opacity="0.22"/>
-        <circle cx="210" cy="210" r="10" fill="#2ea89a"/>
-        <path d="M210 140 c18 0 32 14 32 32 c0 18 -32 40 -32 40 s-32 -22 -32 -40 c0 -18 14 -32 32 -32 z" fill="#d94f4f"/>
-        <circle cx="210" cy="172" r="8" fill="#ffffff"/>
-        <line x1="86" y1="210" x2="334" y2="210" stroke="#2ea89a" stroke-width="2" opacity="0.2"/>
-        <line x1="210" y1="86" x2="210" y2="334" stroke="#2ea89a" stroke-width="2" opacity="0.2"/>
-        <circle cx="270" cy="160" r="6" fill="#2ea89a"/>
-        <circle cx="145" cy="255" r="6" fill="#2ea89a"/>
-        <rect x="92" y="312" width="120" height="10" rx="5" fill="#2ea89a" opacity="0.16"/>
-        <rect x="92" y="292" width="70" height="6" rx="3" fill="#2ea89a" opacity="0.12"/>
-    </svg>
-    """
