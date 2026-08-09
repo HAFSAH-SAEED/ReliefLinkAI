@@ -24,6 +24,7 @@ def render_homepage(page_config: dict[str, str]) -> None:
     st.set_page_config(**page_config)
     _render_styles()
     _render_sidebar()
+    _render_status_strip()
     _render_hero()
     _render_about_section()
     _render_feature_cards()
@@ -38,315 +39,476 @@ def _render_styles() -> None:
     st.markdown(
         """
         <style>
+            :root {
+                --ink: #0b1215;
+                --panel: #101c22;
+                --signal-amber: #f2a341;
+                --relief-teal: #2ea89a;
+                --alert-red: #d94f4f;
+                --paper: #eef2ee;
+                --muted-fog: #7d919a;
+            }
+
             @import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap');
 
             .stApp {
-                background: #fff8ef;
-                color: #1f2937;
+                background: var(--paper);
+                color: var(--ink);
                 font-family: 'Inter', system-ui, -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
             }
 
             .block-container {
                 max-width: 1180px;
-                padding-top: 2rem;
-                padding-bottom: 2rem;
+                padding-top: 1.5rem;
+                padding-bottom: 2.5rem;
             }
 
             [data-testid="stSidebar"] {
-                background: linear-gradient(180deg, #0b4f71 0%, #083b55 100%);
+                background: var(--panel);
             }
 
             [data-testid="stSidebar"] * {
-                color: #ffffff;
+                color: #eef2ee;
             }
 
-            [data-testid="stSidebar"] [data-testid="stMetricValue"] {
-                color: #ffffff;
+            .sidebar-brand {
+                display: flex;
+                align-items: flex-start;
+                gap: 0.75rem;
+                margin-bottom: 1.25rem;
             }
 
-            .emergency-banner {
+            .sidebar-logo {
+                width: 46px;
+                height: 46px;
+                display: grid;
+                place-items: center;
+                border-radius: 8px;
+                background: rgba(46, 168, 154, 0.16);
+                color: #eef2ee;
+                font-size: 1.1rem;
+                border: 1px solid rgba(255, 255, 255, 0.12);
+            }
+
+            .sidebar-title {
+                font-size: 1rem;
+                font-weight: 800;
+                letter-spacing: 0.02em;
+                margin-bottom: 0.15rem;
+            }
+
+            .sidebar-subtitle {
+                font-size: 0.85rem;
+                color: rgba(255, 255, 255, 0.72);
+            }
+
+            .sidebar-status {
                 display: inline-flex;
                 align-items: center;
-                gap: 0.55rem;
-                padding: 0.55rem 0.95rem;
-                border-radius: 999px;
-                background: #ffe9e9;
-                color: #b42318;
-                border: 1px solid #ffc9c9;
-                font-size: 0.9rem;
+                gap: 0.5rem;
+                padding: 0.7rem 0.9rem;
+                border-radius: 10px;
+                background: rgba(255, 255, 255, 0.06);
+                color: #d2f1eb;
+                font-size: 0.85rem;
                 font-weight: 700;
-                letter-spacing: 0.02em;
-                text-transform: uppercase;
-                margin-bottom: 1.1rem;
+                margin-bottom: 1.2rem;
+            }
+
+            .status-dot {
+                width: 0.55rem;
+                height: 0.55rem;
+                border-radius: 50%;
+                background: var(--relief-teal);
+                box-shadow: 0 0 0 4px rgba(46, 168, 154, 0.15);
+            }
+
+            .sidebar-nav-item {
+                display: flex;
+                align-items: center;
+                gap: 0.65rem;
+                padding: 0.7rem 0.85rem;
+                margin: 0.2rem 0;
+                border-radius: 10px;
+                background: rgba(255, 255, 255, 0.04);
+                color: #dbeafe;
+                font-size: 0.95rem;
+                font-weight: 600;
+            }
+
+            .sidebar-nav-item:hover {
+                cursor: pointer;
+                background: rgba(255, 255, 255, 0.09);
+            }
+
+            .sidebar-index {
+                font-family: ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, monospace;
+                color: var(--relief-teal);
+                font-size: 0.85rem;
+            }
+
+            .sidebar-footer {
+                margin-top: 1.5rem;
+                padding-top: 1rem;
+                border-top: 1px solid rgba(255, 255, 255, 0.12);
+                color: rgba(255, 255, 255, 0.72);
+                font-size: 0.88rem;
+            }
+
+            .sidebar-version,
+            .sidebar-prototype {
+                display: block;
+                font-family: ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, monospace;
+            }
+
+            .status-strip {
+                display: inline-flex;
+                flex-wrap: wrap;
+                align-items: center;
+                gap: 0.8rem;
+                padding: 0.9rem 1rem;
+                border-radius: 10px;
+                border: 1px solid rgba(16, 28, 34, 0.12);
+                background: #ffffff;
+                color: var(--ink);
+                font-size: 0.9rem;
+                margin-bottom: 1.4rem;
+            }
+
+            .status-strip strong {
+                font-weight: 700;
+            }
+
+            .status-separator {
+                font-family: ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, monospace;
+                color: var(--muted-fog);
             }
 
             .hero {
-                padding: clamp(2rem, 5vw, 4rem);
-                border-radius: 32px;
-                background:
-                    radial-gradient(circle at 85% 15%, rgba(239, 68, 68, 0.2), transparent 30%),
-                    linear-gradient(135deg, #0b4f71 0%, #0f6f9f 54%, #e8f7ff 100%);
-                color: #ffffff;
-                box-shadow: 0 26px 70px rgba(8, 59, 85, 0.22);
-                margin-bottom: 2.25rem;
-                border: 1px solid rgba(255, 255, 255, 0.42);
-                overflow: hidden;
-            }
-
-            .hero h1 {
-                font-size: clamp(3rem, 8vw, 5.5rem);
-                line-height: 1.05;
-                margin: 0 0 0.75rem 0;
-                color: #ffffff;
-                letter-spacing: -0.05em;
-            }
-
-            .hero h2 {
-                font-size: clamp(1.25rem, 3vw, 1.8rem);
-                font-weight: 650;
-                margin: 0 0 1.25rem 0;
-                color: #e6f6ff;
-            }
-
-            .hero p {
-                max-width: 690px;
-                font-size: 1.1rem;
-                line-height: 1.75;
-                color: #f8fbff;
-                margin: 0;
+                padding: clamp(1.8rem, 3vw, 3rem);
+                border-radius: 10px;
+                background: #ffffff;
+                border: 1px solid rgba(16, 28, 34, 0.12);
+                color: var(--ink);
+                margin-bottom: 1.75rem;
             }
 
             .hero-grid {
                 display: grid;
-                grid-template-columns: minmax(0, 1.1fr) minmax(280px, 0.9fr);
-                gap: 2rem;
+                grid-template-columns: minmax(0, 1.35fr) minmax(260px, 0.75fr);
+                gap: 1.5rem;
                 align-items: center;
             }
 
-            .hero-actions {
+            .hero h1 {
+                font-size: clamp(2.7rem, 6vw, 4rem);
+                line-height: 1.05;
+                margin: 0 0 0.55rem 0;
+                letter-spacing: -0.04em;
+            }
+
+            .hero h2 {
+                font-size: clamp(1.05rem, 2.4vw, 1.5rem);
+                font-weight: 700;
+                margin: 0 0 1rem 0;
+                color: var(--muted-fog);
+            }
+
+            .hero p {
+                max-width: 620px;
+                font-size: 1rem;
+                line-height: 1.75;
+                color: #475569;
+                margin: 0 0 1rem 0;
+            }
+
+            .hero-status {
                 display: flex;
                 flex-wrap: wrap;
-                gap: 0.8rem;
-                margin-top: 1.7rem;
+                gap: 0.75rem;
+                margin-bottom: 1rem;
             }
 
             .hero-pill {
-                padding: 0.75rem 1rem;
+                padding: 0.6rem 0.85rem;
                 border-radius: 999px;
-                background: rgba(255, 255, 255, 0.16);
-                border: 1px solid rgba(255, 255, 255, 0.28);
-                color: #ffffff;
+                background: rgba(46, 168, 154, 0.12);
+                border: 1px solid rgba(46, 168, 154, 0.22);
+                color: var(--relief-teal);
+                font-size: 0.82rem;
                 font-weight: 700;
-                backdrop-filter: blur(10px);
+                letter-spacing: 0.02em;
+                text-transform: uppercase;
+            }
+
+            .hero-pill.alert {
+                background: rgba(217, 79, 79, 0.12);
+                border-color: rgba(217, 79, 79, 0.2);
+                color: var(--alert-red);
             }
 
             .relief-illustration {
-                min-height: 360px;
-                border-radius: 28px;
-                background: rgba(255, 255, 255, 0.9);
-                box-shadow: inset 0 0 0 1px rgba(11, 79, 113, 0.08), 0 20px 50px rgba(8, 59, 85, 0.14);
+                min-height: 320px;
+                border-radius: 10px;
+                background: var(--panel);
                 display: flex;
                 align-items: center;
                 justify-content: center;
-                padding: 1.25rem;
+                padding: 1.1rem;
             }
 
             .relief-illustration svg {
-                width: min(100%, 430px);
+                width: min(100%, 320px);
                 height: auto;
             }
 
             .section {
                 margin: 2rem 0;
-                padding: clamp(1.4rem, 4vw, 2.4rem);
-                border-radius: 28px;
-                background: rgba(255, 255, 255, 0.72);
-                border: 1px solid rgba(11, 79, 113, 0.08);
-                box-shadow: 0 18px 48px rgba(31, 41, 55, 0.06);
+                padding: clamp(1.4rem, 3vw, 2.2rem);
+                border-radius: 10px;
+                background: #ffffff;
+                border: 1px solid rgba(16, 28, 34, 0.12);
             }
 
             .section-soft {
-                background: #f7f9fb;
+                background: #f4f6f4;
             }
 
             .section-title {
-                color: #0b4f71;
-                font-size: clamp(1.7rem, 4vw, 2.45rem);
-                font-weight: 800;
+                color: var(--ink);
+                font-size: clamp(1.5rem, 3vw, 2rem);
+                font-weight: 700;
                 letter-spacing: -0.03em;
                 margin: 0 0 0.75rem 0;
             }
 
             .section-kicker {
-                color: #d92d20;
-                font-size: 0.86rem;
+                color: var(--relief-teal);
+                font-size: 0.84rem;
                 font-weight: 800;
-                letter-spacing: 0.08em;
+                letter-spacing: 0.12em;
                 text-transform: uppercase;
                 margin-bottom: 0.55rem;
             }
 
             .section-copy {
-                color: #4b5563;
-                font-size: 1.05rem;
+                color: var(--muted-fog);
+                font-size: 1rem;
                 line-height: 1.75;
-                max-width: 830px;
+                max-width: 780px;
+            }
+
+            .feature-grid {
+                display: grid;
+                grid-template-columns: repeat(4, minmax(0, 1fr));
+                gap: 1rem;
+                margin-top: 1.4rem;
             }
 
             .feature-card {
-                min-height: 215px;
-                padding: 1.45rem;
-                border-radius: 24px;
-                background: #f8fafc;
-                border: 1px solid #e5e7eb;
-                box-shadow: 0 14px 34px rgba(8, 59, 85, 0.08);
-                border-top: 5px solid #0f6f9f;
+                min-height: 170px;
+                padding: 1.2rem;
+                border-radius: 6px;
+                background: #ffffff;
+                border: 1px solid rgba(16, 28, 34, 0.12);
             }
 
             .feature-card h3 {
-                color: #083b55;
-                font-size: 1.18rem;
-                margin-bottom: 0.75rem;
+                color: var(--ink);
+                font-size: 1rem;
+                margin-bottom: 0.65rem;
+                letter-spacing: -0.01em;
             }
 
             .feature-card p {
-                color: #4b5563;
-                line-height: 1.65;
+                color: #475569;
+                line-height: 1.7;
                 margin: 0;
             }
 
             .workflow {
                 display: grid;
                 grid-template-columns: repeat(4, minmax(0, 1fr));
-                gap: 0.8rem;
-                align-items: stretch;
-                margin-top: 1.5rem;
+                gap: 0.85rem;
+                margin-top: 1.4rem;
             }
 
             .workflow-step {
-                position: relative;
-                padding: 1.3rem 1rem;
-                border-radius: 22px;
-                background: #ffffff;
-                border: 1px solid #dbeafe;
+                padding: 1rem;
+                border-radius: 6px;
+                background: #f4f6f4;
+                border: 1px solid rgba(16, 28, 34, 0.12);
                 text-align: center;
-                box-shadow: 0 12px 30px rgba(8, 59, 85, 0.08);
-                color: #083b55;
-                font-weight: 800;
+                color: var(--ink);
+                font-weight: 700;
+                letter-spacing: 0.01em;
+                position: relative;
             }
 
             .workflow-step:not(:last-child)::after {
-                content: '↓';
+                content: '→';
                 position: absolute;
-                right: -0.72rem;
+                right: -0.65rem;
                 top: 50%;
-                transform: translateY(-50%) rotate(-90deg);
-                color: #d92d20;
-                font-size: 1.7rem;
-                font-weight: 900;
+                transform: translateY(-50%);
+                color: var(--muted-fog);
+                font-size: 1rem;
             }
 
             .roadmap {
                 display: grid;
                 grid-template-columns: repeat(5, minmax(0, 1fr));
-                gap: 0.9rem;
-                margin-top: 1.5rem;
+                gap: 0.85rem;
+                margin-top: 1.4rem;
             }
 
             .roadmap-item {
-                padding: 1.15rem;
-                border-radius: 20px;
+                padding: 1.1rem;
+                border-radius: 6px;
                 background: #ffffff;
-                border: 1px solid #e5e7eb;
-                box-shadow: 0 10px 26px rgba(31, 41, 55, 0.06);
-                color: #1f2937;
-                font-weight: 800;
-                min-height: 112px;
+                border: 1px solid rgba(16, 28, 34, 0.12);
+                color: var(--ink);
+                font-weight: 700;
+                min-height: 110px;
             }
 
             .roadmap-item span {
                 display: block;
-                margin-top: 0.45rem;
-                color: #6b7280;
+                margin-top: 0.55rem;
+                color: var(--muted-fog);
                 font-size: 0.9rem;
                 font-weight: 600;
             }
 
-            .roadmap-current {
-                border-color: #98d8ef;
-                background: #eff9ff;
+            .roadmap-complete {
+                border-color: rgba(46, 168, 154, 0.28);
+                background: rgba(46, 168, 154, 0.08);
+            }
+
+            .roadmap-live {
+                border-color: rgba(242, 163, 65, 0.28);
+                background: rgba(242, 163, 65, 0.08);
+            }
+
+            .roadmap-next {
+                border-color: rgba(16, 28, 34, 0.18);
+                background: #f7f7f7;
+            }
+
+            .roadmap-future {
+                border-color: rgba(125, 145, 154, 0.2);
+                background: #fafafa;
             }
 
             .chat-section {
                 margin: 2rem 0;
-                padding: clamp(1.4rem, 4vw, 2.4rem);
-                border-radius: 28px;
-                background: #ffffff;
-                border: 1px solid rgba(11, 79, 113, 0.12);
-                box-shadow: 0 18px 48px rgba(31, 41, 55, 0.07);
+                padding: clamp(1.4rem, 3vw, 2.4rem);
+                border-radius: 10px;
+                background: #f4f6f4;
+                border: 1px solid rgba(16, 28, 34, 0.12);
+                position: relative;
+                padding-bottom: 5rem;
             }
 
-            .chat-helper {
-                color: #4b5563;
-                font-size: 0.98rem;
-                line-height: 1.65;
+            .chat-header {
+                display: flex;
+                flex-wrap: wrap;
+                justify-content: space-between;
+                align-items: center;
+                gap: 1rem;
                 margin-bottom: 1rem;
             }
 
+            .chat-header-title {
+                font-size: 1.1rem;
+                font-weight: 700;
+                color: var(--ink);
+            }
+
+            .chat-header-status {
+                display: inline-flex;
+                align-items: center;
+                gap: 0.55rem;
+                padding: 0.55rem 0.85rem;
+                border-radius: 999px;
+                background: rgba(46, 168, 154, 0.12);
+                border: 1px solid rgba(46, 168, 154, 0.18);
+                color: var(--relief-teal);
+                font-size: 0.82rem;
+                font-weight: 700;
+                text-transform: uppercase;
+            }
+
+            .chat-helper {
+                color: var(--muted-fog);
+                font-size: 0.95rem;
+                line-height: 1.7;
+                margin-bottom: 1rem;
+                max-width: 750px;
+            }
+
             [data-testid="stChatMessage"] {
-                border-radius: 20px;
-                padding: 0.35rem 0.75rem;
-                background: #f8fafc;
-                border: 1px solid #e5e7eb;
-                color: #1f2937 !important;
+                border-radius: 10px;
+                padding: 0.55rem 0.85rem;
+                background: #ffffff;
+                border: 1px solid rgba(16, 28, 34, 0.12);
+                color: var(--ink) !important;
             }
 
             [data-testid="stChatMessage"] * {
-                color: #1f2937 !important;
+                color: var(--ink) !important;
             }
 
             [data-testid="stChatMessage"] p,
             [data-testid="stChatMessage"] div,
             [data-testid="stChatMessage"] span,
             [data-testid="stChatMessage"] li {
-                color: #1f2937 !important;
+                color: var(--ink) !important;
+            }
+
+            [data-testid="stChatInput"] {
+                position: relative !important;
+                z-index: 1;
+                margin-top: 1rem;
             }
 
             [data-testid="stChatInput"] textarea {
-                color: #ffffff !important;
-                caret-color: #ffffff !important;
+                background: var(--panel) !important;
+                border: 1px solid rgba(255, 255, 255, 0.08) !important;
+                color: #eef2ee !important;
+                caret-color: #eef2ee !important;
             }
 
             [data-testid="stChatInput"] textarea::placeholder {
-                color: #d1d5db !important;
+                color: rgba(255, 255, 255, 0.72) !important;
                 opacity: 1;
             }
 
             [data-testid="stChatInput"] button {
-                color: #ffffff !important;
+                color: #eef2ee !important;
             }
 
             .footer {
                 margin-top: 2rem;
                 padding: 1.5rem;
                 text-align: center;
-                color: #4b5563;
-                border-top: 1px solid rgba(11, 79, 113, 0.14);
-                font-weight: 650;
+                color: var(--muted-fog);
+                border-top: 1px solid rgba(16, 28, 34, 0.12);
+                font-weight: 600;
             }
 
             .stButton > button {
-                background: #d92d20;
+                background: var(--relief-teal);
                 border: 0;
                 color: #ffffff;
                 border-radius: 999px;
                 padding: 0.85rem 1.6rem;
                 font-weight: 700;
-                box-shadow: 0 12px 28px rgba(217, 45, 32, 0.22);
+                box-shadow: none;
             }
 
             .stButton > button:hover {
-                background: #b42318;
+                background: #278f82;
                 color: #ffffff;
                 border: 0;
             }
@@ -354,15 +516,30 @@ def _render_styles() -> None:
             @media (max-width: 900px) {
                 .hero-grid,
                 .workflow,
-                .roadmap {
+                .roadmap,
+                .feature-grid {
                     grid-template-columns: 1fr;
                 }
 
                 .workflow-step:not(:last-child)::after {
                     right: 50%;
                     top: auto;
-                    bottom: -1.3rem;
+                    bottom: -1.2rem;
                     transform: translateX(50%);
+                }
+            }
+
+            @media (max-width: 640px) {
+                .hero {
+                    padding: 1.4rem 1rem;
+                }
+
+                .hero h1 {
+                    font-size: 2.4rem;
+                }
+
+                .sidebar-nav-item {
+                    padding: 0.65rem 0.75rem;
                 }
             }
         </style>
@@ -372,20 +549,74 @@ def _render_styles() -> None:
 
 
 def _render_sidebar() -> None:
-    """Render the project status and developer notes sidebar."""
+    """Render the ReliefLink AI product sidebar."""
     with st.sidebar:
-        st.header("Project Status")
-        st.metric("Version", PROJECT_VERSION)
-        st.success(PROJECT_STATUS)
+        st.markdown(
+            """
+            <div class="sidebar-brand">
+                <div class="sidebar-logo">✚</div>
+                <div>
+                    <div class="sidebar-title">ReliefLink AI</div>
+                    <div class="sidebar-subtitle">Disaster Response</div>
+                </div>
+            </div>
+            """,
+            unsafe_allow_html=True,
+        )
+
+        st.markdown(
+            """
+            <div class="sidebar-status">
+                <span class="status-dot"></span>
+                SYSTEM ONLINE
+            </div>
+            """,
+            unsafe_allow_html=True,
+        )
 
         st.divider()
 
-        st.header("Developer Notes")
-        st.write(
-            "ReliefLink AI now connects this interface to Backboard for assistant "
-            "responses. NGO lookup, maps, WhatsApp, and disaster workflow automation "
-            "are not implemented yet."
+        st.markdown("### Navigation")
+
+        st.markdown(
+            """
+            <div class="sidebar-nav-item"><span class="sidebar-index">01</span> Overview</div>
+            <div class="sidebar-nav-item"><span class="sidebar-index">AI</span> AI Assistant</div>
+            <div class="sidebar-nav-item"><span class="sidebar-index">MEM</span> Memory</div>
+            <div class="sidebar-nav-item"><span class="sidebar-index">RP</span> Reporting</div>
+            <div class="sidebar-nav-item"><span class="sidebar-index">RM</span> Roadmap</div>
+            """,
+            unsafe_allow_html=True,
         )
+
+        st.divider()
+
+        st.markdown(
+            f"""
+            <div class="sidebar-footer">
+                <div class="sidebar-version">v{PROJECT_VERSION}</div>
+                <div class="sidebar-prototype">{PROJECT_STATUS}</div>
+            </div>
+            """,
+            unsafe_allow_html=True,
+        )
+
+
+def _render_status_strip() -> None:
+    """Render the instrument-style application status strip."""
+    st.markdown(
+        """
+        <div class="status-strip">
+            <span class="status-dot"></span>
+            <strong>SYSTEM ONLINE</strong>
+            <span class="status-separator">·</span>
+            <span>LAST SYNC 00:02:14</span>
+            <span class="status-separator">·</span>
+            <span>MEMORY: ACTIVE</span>
+        </div>
+        """,
+        unsafe_allow_html=True,
+    )
 
 
 def _render_hero() -> None:
@@ -395,15 +626,17 @@ def _render_hero() -> None:
         <div class="hero">
             <div class="hero-grid">
                 <div>
-                    <div class="emergency-banner">Emergency-ready prototype</div>
+                    <div class="section-kicker">Field operations console</div>
                     <h1>{APP_TITLE}</h1>
                     <h2>{APP_SUBTITLE}</h2>
-                    <p>{APP_DESCRIPTION}</p>
-                    <div class="hero-actions">
-                        <div class="hero-pill">Humanitarian response</div>
-                        <div class="hero-pill">Accessible reporting</div>
-                        <div class="hero-pill">Memory-first design</div>
+                    <div class="hero-status">
+                        <div class="hero-pill">AI ASSISTANT ONLINE</div>
+                        <div class="hero-pill">MEMORY ACTIVE</div>
                     </div>
+                    <p>
+                        ReliefLink AI helps first responders report urgent incidents with calm,
+                        operational guidance and situational context.
+                    </p>
                 </div>
                 <div class="relief-illustration">
                     {_relief_svg()}
@@ -420,13 +653,12 @@ def _render_about_section() -> None:
     st.markdown(
         """
         <section class="section">
-            <div class="section-kicker">About the prototype</div>
-            <h2 class="section-title">Built for faster, clearer crisis reporting</h2>
+            <div class="section-kicker">Operations brief</div>
+            <h2 class="section-title">Mission-ready incident reporting</h2>
             <p class="section-copy">
-                ReliefLink AI presents a future-facing experience where people affected by
-                floods, medical emergencies, displacement, or infrastructure damage can
-                describe what is happening in plain language. The interface is designed to
-                feel calm, trustworthy, and action-oriented during stressful moments.
+                ReliefLink AI is built to support faster, clearer disaster reporting during floods,
+                medical emergencies, displacement, and infrastructure failures. The interface
+                is designed to feel calm, precise, and reliable.
             </p>
         </section>
         """,
@@ -439,11 +671,10 @@ def _render_feature_cards() -> None:
     st.markdown(
         """
         <section class="section section-soft">
-            <div class="section-kicker">Platform capabilities</div>
-            <h2 class="section-title">Designed around urgent human needs</h2>
+            <div class="section-kicker">Core capabilities</div>
+            <h2 class="section-title">Operational features available now</h2>
             <p class="section-copy">
-                The current app is a visual prototype. These cards describe the product
-                direction without enabling forms, AI, memory, or external integrations yet.
+                These modules describe the current console capabilities and planned next steps.
             </p>
         </section>
         """,
@@ -456,10 +687,8 @@ def _render_feature_cards() -> None:
         st.markdown(
             """
             <div class="feature-card">
-                <h3>📍 Report Disaster</h3>
-                <p>
-                    Describe disasters in natural language.
-                </p>
+                <h3>AI Disaster Assistant</h3>
+                <p>Guided incident reporting that turns urgent events into clear updates.</p>
             </div>
             """,
             unsafe_allow_html=True,
@@ -469,10 +698,8 @@ def _render_feature_cards() -> None:
         st.markdown(
             """
             <div class="feature-card">
-                <h3>🧠 Persistent AI Memory</h3>
-                <p>
-                    Remember important information across conversations.
-                </p>
+                <h3>Persistent AI Memory</h3>
+                <p>Maintains context across the session so the assistant stays aligned.</p>
             </div>
             """,
             unsafe_allow_html=True,
@@ -482,10 +709,8 @@ def _render_feature_cards() -> None:
         st.markdown(
             """
             <div class="feature-card">
-                <h3>🤝 Future NGO Coordination</h3>
-                <p>
-                    Future versions will connect people with relief organizations.
-                </p>
+                <h3>Structured Reporting</h3>
+                <p>Converts free-form details into concise response-ready incident summaries.</p>
             </div>
             """,
             unsafe_allow_html=True,
@@ -495,10 +720,8 @@ def _render_feature_cards() -> None:
         st.markdown(
             """
             <div class="feature-card">
-                <h3>📊 Better Situation Awareness</h3>
-                <p>
-                    Help responders understand recurring needs.
-                </p>
+                <h3>Future NGO Coordination</h3>
+                <p>Planned integrations that connect relief organizations and field teams.</p>
             </div>
             """,
             unsafe_allow_html=True,
@@ -510,17 +733,16 @@ def _render_workflow_section() -> None:
     st.markdown(
         """
         <section class="section">
-            <div class="section-kicker">How it will work</div>
-            <h2 class="section-title">From first report to coordinated response</h2>
+            <div class="section-kicker">Workflow</div>
+            <h2 class="section-title">Describe ? Understand ? Remember ? Coordinate</h2>
             <p class="section-copy">
-                The workflow shows the intended future path while keeping this phase focused
-                only on the user interface.
+                This sequence shows the operational path from first report to sustained response.
             </p>
             <div class="workflow">
-                <div class="workflow-step">Report Situation</div>
-                <div class="workflow-step">AI Understands Context</div>
-                <div class="workflow-step">Remembers Important Information</div>
-                <div class="workflow-step">Future Relief Coordination</div>
+                <div class="workflow-step">Describe</div>
+                <div class="workflow-step">Understand</div>
+                <div class="workflow-step">Remember</div>
+                <div class="workflow-step">Coordinate</div>
             </div>
         </section>
         """,
@@ -539,8 +761,15 @@ def _render_chat_section() -> None:
     st.markdown(
         """
         <section class="chat-section">
-            <div class="section-kicker">Relief chat</div>
-            <h2 class="section-title">Start a guided relief conversation</h2>
+            <div class="chat-header">
+                <div class="chat-header-title">ReliefLink Communications</div>
+                <div class="chat-header-status">
+                    <span class="status-dot"></span>
+                    ACTIVE
+                </div>
+            </div>
+            <div class="section-kicker">AI Chat</div>
+            <h2 class="section-title">Report the incident in plain language</h2>
             <p class="chat-helper">
                 Share what happened, where you are, and what help is needed. ReliefLink AI
                 will respond using the persistent Backboard assistant with memory enabled.
@@ -615,14 +844,14 @@ def _render_roadmap_section() -> None:
     st.markdown(
         """
         <section class="section section-soft">
-            <div class="section-kicker">Future roadmap</div>
-            <h2 class="section-title">Phased delivery plan</h2>
+            <div class="section-kicker">Roadmap</div>
+            <h2 class="section-title">Current status and next phases</h2>
             <div class="roadmap">
-                <div class="roadmap-item roadmap-current">Phase 1 ✅<span>Interface</span></div>
-                <div class="roadmap-item">Phase 2 🔜<span>Disaster Reporting</span></div>
-                <div class="roadmap-item">Phase 3 🔜<span>AI Assistant</span></div>
-                <div class="roadmap-item">Phase 4 🔜<span>Persistent Memory</span></div>
-                <div class="roadmap-item">Phase 5 🔜<span>NGO Integration</span></div>
+                <div class="roadmap-item roadmap-complete">Phase 1 – Interface<span>COMPLETE</span></div>
+                <div class="roadmap-item roadmap-live">Phase 2 – AI Assistant<span>LIVE</span></div>
+                <div class="roadmap-item roadmap-live">Phase 3 – Persistent Memory<span>LIVE</span></div>
+                <div class="roadmap-item roadmap-next">Phase 4 – Disaster Reporting<span>NEXT</span></div>
+                <div class="roadmap-item roadmap-future">Phase 5 – NGO Integration<span>FUTURE</span></div>
             </div>
         </section>
         """,
@@ -645,35 +874,25 @@ def _render_footer() -> None:
 def _relief_svg() -> str:
     """Return inline open SVG artwork for humanitarian relief."""
     return """
-    <svg viewBox="0 0 520 420" role="img" aria-label="Humanitarian relief illustration" xmlns="http://www.w3.org/2000/svg">
+    <svg viewBox="0 0 420 420" role="img" aria-label="Operations radar illustration" xmlns="http://www.w3.org/2000/svg">
         <defs>
-            <linearGradient id="sky" x1="0" y1="0" x2="1" y2="1">
-                <stop offset="0" stop-color="#e0f2fe"/>
-                <stop offset="1" stop-color="#fff7ed"/>
-            </linearGradient>
-            <linearGradient id="water" x1="0" y1="0" x2="1" y2="0">
-                <stop offset="0" stop-color="#38bdf8"/>
-                <stop offset="1" stop-color="#0f6f9f"/>
+            <linearGradient id="bg" x1="0" y1="0" x2="1" y2="1">
+                <stop offset="0" stop-color="#101c22"/>
+                <stop offset="1" stop-color="#0e1620"/>
             </linearGradient>
         </defs>
-        <rect width="520" height="420" rx="30" fill="url(#sky)"/>
-        <circle cx="420" cy="74" r="42" fill="#fed7aa"/>
-        <path d="M58 284c55-26 104-26 159 0s105 26 160 0 82-22 119-4v96H58z" fill="url(#water)" opacity="0.88"/>
-        <path d="M0 324c60-25 118-25 176 0s116 25 174 0 112-24 170-2v98H0z" fill="#0b4f71" opacity="0.9"/>
-        <path d="M92 234h162l-29-82H121z" fill="#ffffff" stroke="#0b4f71" stroke-width="6"/>
-        <path d="M126 152h96l-17-48h-62z" fill="#e8f7ff" stroke="#0b4f71" stroke-width="6"/>
-        <rect x="160" y="175" width="45" height="45" rx="7" fill="#ef4444"/>
-        <rect x="174" y="161" width="17" height="73" rx="5" fill="#ef4444"/>
-        <path d="M292 193c30-39 92-33 114 11 28 1 50 24 50 52 0 29-24 53-53 53H295c-33 0-60-27-60-60 0-30 22-54 57-56z" fill="#ffffff" stroke="#0b4f71" stroke-width="6"/>
-        <circle cx="335" cy="250" r="21" fill="#ef4444"/>
-        <rect x="327" y="221" width="16" height="58" rx="5" fill="#ef4444"/>
-        <rect x="306" y="242" width="58" height="16" rx="5" fill="#ef4444"/>
-        <path d="M98 330h120l-26 35h-69z" fill="#f97316" stroke="#7c2d12" stroke-width="5"/>
-        <path d="M110 330l36-28h44l35 28" fill="#fed7aa" stroke="#7c2d12" stroke-width="5"/>
-        <circle cx="140" cy="285" r="16" fill="#7c2d12"/>
-        <circle cx="197" cy="285" r="16" fill="#7c2d12"/>
-        <path d="M310 352c42-16 78-16 120 0" stroke="#e0f2fe" stroke-width="10" stroke-linecap="round" opacity="0.65"/>
-        <path d="M342 378c22-8 45-8 67 0" stroke="#e0f2fe" stroke-width="8" stroke-linecap="round" opacity="0.65"/>
+        <rect x="10" y="10" width="400" height="400" rx="18" fill="url(#bg)"/>
+        <circle cx="210" cy="210" r="128" fill="none" stroke="#2ea89a" stroke-width="6" opacity="0.2"/>
+        <circle cx="210" cy="210" r="88" fill="none" stroke="#2ea89a" stroke-width="4" opacity="0.18"/>
+        <circle cx="210" cy="210" r="44" fill="none" stroke="#2ea89a" stroke-width="3" opacity="0.22"/>
+        <circle cx="210" cy="210" r="10" fill="#2ea89a"/>
+        <path d="M210 140 c18 0 32 14 32 32 c0 18 -32 40 -32 40 s-32 -22 -32 -40 c0 -18 14 -32 32 -32 z" fill="#d94f4f"/>
+        <circle cx="210" cy="172" r="8" fill="#ffffff"/>
+        <line x1="86" y1="210" x2="334" y2="210" stroke="#2ea89a" stroke-width="2" opacity="0.2"/>
+        <line x1="210" y1="86" x2="210" y2="334" stroke="#2ea89a" stroke-width="2" opacity="0.2"/>
+        <circle cx="270" cy="160" r="6" fill="#2ea89a"/>
+        <circle cx="145" cy="255" r="6" fill="#2ea89a"/>
+        <rect x="92" y="312" width="120" height="10" rx="5" fill="#2ea89a" opacity="0.16"/>
+        <rect x="92" y="292" width="70" height="6" rx="3" fill="#2ea89a" opacity="0.12"/>
     </svg>
     """
-
