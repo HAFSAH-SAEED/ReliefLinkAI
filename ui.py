@@ -178,12 +178,15 @@ def _render_styles() -> None:
                 display: grid;
                 grid-template-columns: minmax(0, 1.05fr) minmax(320px, 0.95fr);
                 gap: 2rem;
+                align-items: center;
                 padding: 2rem;
                 border-radius: 28px;
-                background: var(--paper);
+                background: linear-gradient(135deg, rgba(255, 255, 255, 0.94), rgba(242, 234, 217, 0.96));
                 border: 1px solid rgba(58, 42, 32, 0.12);
                 box-shadow: 0 24px 70px rgba(58, 42, 32, 0.08);
-                margin-bottom: 2rem;
+                margin-bottom: 1.5rem;
+                max-width: 100%;
+                box-sizing: border-box;
             }
 
             .hero-copy {
@@ -191,10 +194,12 @@ def _render_styles() -> None:
                 flex-direction: column;
                 justify-content: center;
                 gap: 1rem;
+                min-width: 0;
+                max-width: 100%;
             }
 
             .hero-kicker {
-                font-size: 0.9rem;
+                font-size: 0.86rem;
                 font-weight: 700;
                 letter-spacing: 0.2em;
                 text-transform: uppercase;
@@ -204,18 +209,19 @@ def _render_styles() -> None:
 
             .hero-title {
                 font-family: 'Fraunces', Georgia, Cambria, 'Times New Roman', serif;
-                font-size: clamp(2.8rem, 5vw, 4.6rem);
-                line-height: 0.98;
+                font-size: clamp(2.7rem, 4.8vw, 4.7rem);
+                line-height: 0.92;
                 margin: 0;
                 color: var(--deep-umber);
+                letter-spacing: -0.02em;
             }
 
             .hero-subtitle {
-                font-size: 1.1rem;
+                font-size: 1.08rem;
                 color: var(--deep-umber);
-                max-width: 620px;
+                max-width: 650px;
                 margin: 0;
-                line-height: 1.6;
+                line-height: 1.7;
             }
 
             .hero-copy p {
@@ -226,100 +232,186 @@ def _render_styles() -> None:
                 margin: 0;
             }
 
-            .hero-tags {
+            .hero-actions {
                 display: flex;
                 flex-wrap: wrap;
-                gap: 0.8rem;
-                margin-top: 1rem;
+                gap: 0.75rem;
+                margin-top: 0.25rem;
             }
 
-            .hero-tag {
-                padding: 0.7rem 1rem;
+            .hero-pill {
+                display: inline-flex;
+                align-items: center;
+                padding: 0.6rem 0.95rem;
                 border-radius: 999px;
                 background: rgba(179, 85, 47, 0.12);
                 color: var(--clay);
                 font-weight: 700;
-                font-size: 0.85rem;
+                font-size: 0.82rem;
                 letter-spacing: 0.08em;
+                text-transform: uppercase;
             }
 
-            .hero-image {
-                position: relative;
-                min-height: 420px;
-                border-radius: 24px;
-                background: linear-gradient(0deg, rgba(242, 234, 217, 0.88), rgba(242, 234, 217, 0.88)),
-                    linear-gradient(135deg, #efe4cf 12%, #f7eee0 54%, #e6d1b0 100%);
-                border: 1px solid rgba(58, 42, 32, 0.14);
-                display: grid;
-                place-items: center;
-                color: var(--deep-umber);
-                overflow: hidden;
-                padding: 1.25rem;
-            }
-
-            .hero-map {
+            .hero-visual {
+                min-height: 430px;
                 width: 100%;
-                max-width: 420px;
-                aspect-ratio: 1 / 1;
-                border-radius: 22px;
-                background: #f2ead9;
-                border: 1px solid rgba(58, 42, 32, 0.12);
-                box-shadow: inset 0 0 0 1px rgba(58, 42, 32, 0.04);
-                position: relative;
-                overflow: hidden;
+                max-width: 100%;
+                display: flex;
+                align-items: center;
+                justify-content: center;
+                min-width: 0;
             }
 
-            .hero-map::before {
+            .hero-visual-shell {
+                position: relative;
+                width: 100%;
+                max-width: 470px;
+                min-height: 430px;
+                border-radius: 28px;
+                background: linear-gradient(145deg, rgba(58, 42, 32, 0.96), rgba(92, 107, 71, 0.92));
+                border: 1px solid rgba(255, 255, 255, 0.14);
+                box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.14), 0 20px 45px rgba(58, 42, 32, 0.2);
+                overflow: hidden;
+                padding: 1rem;
+                box-sizing: border-box;
+            }
+
+            .hero-visual-shell::after {
                 content: '';
                 position: absolute;
                 inset: 0;
-                background: radial-gradient(circle at 20% 25%, rgba(255, 255, 255, 0.35), transparent 12%),
-                    radial-gradient(circle at 80% 70%, rgba(255, 249, 227, 0.35), transparent 12%);
-                opacity: 0.7;
+                background: radial-gradient(circle at top right, rgba(232, 169, 76, 0.18), transparent 32%);
+                pointer-events: none;
             }
 
-            .hero-map .terrain-line,
-            .hero-map .water-line {
-                position: absolute;
-                width: 240px;
-                height: 240px;
-                border-radius: 999px;
-                border: 1px solid rgba(58, 42, 32, 0.08);
-                left: 18%;
-                top: 16%;
-            }
-
-            .hero-map .water-line {
-                border-color: rgba(143, 166, 163, 0.24);
-            }
-
-            .hero-map .path {
-                position: absolute;
-                width: 110%;
-                height: 110%;
-                left: -5%;
-                top: -4%;
-                background: radial-gradient(circle at 65% 76%, transparent 12px, rgba(255, 255, 255, 0.68) 14px, transparent 18px);
-            }
-
-            .hero-map svg {
+            .hero-map-panel {
                 position: relative;
+                width: 100%;
+                height: 100%;
+                border-radius: 22px;
+                background: linear-gradient(180deg, rgba(242, 234, 217, 0.97), rgba(224, 213, 186, 0.96));
+                border: 1px solid rgba(58, 42, 32, 0.12);
+                overflow: hidden;
+                min-width: 0;
+                box-sizing: border-box;
+            }
+
+            .hero-map-panel::before {
+                content: '';
+                position: absolute;
+                inset: 0;
+                background-image: linear-gradient(rgba(58, 42, 32, 0.05) 1px, transparent 1px), linear-gradient(90deg, rgba(58, 42, 32, 0.05) 1px, transparent 1px);
+                background-size: 26px 26px;
+                opacity: 0.45;
+            }
+
+            .hero-map-panel svg {
+                position: absolute;
+                inset: 0;
                 width: 100%;
                 height: 100%;
             }
 
-            .hero-map .pulse {
-                animation: pulse 3s ease-out infinite;
-                transform-origin: center;
-                transform-box: fill-box;
+            .hero-map-panel .map-route {
+                position: absolute;
+                inset: 0;
+                background: radial-gradient(circle at 26% 28%, rgba(255, 255, 255, 0.7), transparent 14%),
+                    radial-gradient(circle at 72% 74%, rgba(255, 244, 219, 0.65), transparent 12%);
+            }
+
+            .hero-map-panel .map-pin {
+                position: absolute;
+                top: 26%;
+                left: 63%;
+                width: 76px;
+                height: 76px;
+                border-radius: 50%;
+                border: 2px solid rgba(179, 85, 47, 0.28);
+                background: rgba(179, 85, 47, 0.16);
+                transform: translate(-50%, -50%);
+                animation: pulse 3.2s ease-in-out infinite;
+            }
+
+            .hero-map-panel .map-pin::after {
+                content: '';
+                position: absolute;
+                inset: 16px;
+                border-radius: 50%;
+                background: var(--clay);
+                box-shadow: 0 0 0 6px rgba(179, 85, 47, 0.16);
+            }
+
+            .hero-map-panel .map-signal {
+                position: absolute;
+                bottom: 14%;
+                left: 16%;
+                width: 180px;
+                height: 180px;
+                border: 1px dashed rgba(143, 166, 163, 0.38);
+                border-radius: 50%;
+            }
+
+            .hero-report-card {
+                position: absolute;
+                left: 1.2rem;
+                bottom: 1.2rem;
+                width: min(72%, 270px);
+                padding: 1rem 1rem 0.95rem;
+                border-radius: 18px;
+                background: rgba(255, 248, 236, 0.94);
+                border: 1px solid rgba(58, 42, 32, 0.12);
+                box-shadow: 0 16px 32px rgba(58, 42, 32, 0.12);
+                backdrop-filter: blur(6px);
+                min-width: 0;
+                box-sizing: border-box;
+            }
+
+            .hero-report-card .report-label {
+                font-size: 0.74rem;
+                font-weight: 800;
+                letter-spacing: 0.16em;
+                text-transform: uppercase;
+                color: var(--clay);
+                margin-bottom: 0.3rem;
+            }
+
+            .hero-report-card .report-title {
+                font-size: 1.02rem;
+                font-weight: 800;
+                color: var(--deep-umber);
+                margin-bottom: 0.35rem;
+            }
+
+            .hero-report-card .report-meta,
+            .hero-report-card .report-copy {
+                font-size: 0.9rem;
+                color: #5c4d3d;
+                line-height: 1.6;
+                margin: 0 0 0.25rem 0;
+                overflow-wrap: anywhere;
+            }
+
+            .hero-report-card .report-button {
+                display: inline-flex;
+                align-items: center;
+                justify-content: center;
+                margin-top: 0.7rem;
+                padding: 0.58rem 0.95rem;
+                border-radius: 999px;
+                background: var(--clay);
+                color: #fff;
+                font-weight: 700;
+                font-size: 0.82rem;
+                letter-spacing: 0.06em;
+                text-transform: uppercase;
             }
 
             .hero-title,
             .hero-subtitle,
-            .hero-tags {
+            .hero-actions {
                 opacity: 0;
                 transform: translateY(8px);
-                animation: fade-up 400ms ease-out forwards;
+                animation: fade-up 450ms ease-out forwards;
             }
 
             .hero-title {
@@ -330,15 +422,15 @@ def _render_styles() -> None:
                 animation-delay: 100ms;
             }
 
-            .hero-tags {
+            .hero-actions {
                 animation-delay: 200ms;
             }
 
             @media (prefers-reduced-motion: reduce) {
-                .hero-map .pulse,
+                .hero-map-panel .map-pin,
                 .hero-title,
                 .hero-subtitle,
-                .hero-tags {
+                .hero-actions {
                     animation: none !important;
                     transform: none !important;
                     opacity: 1 !important;
@@ -362,8 +454,8 @@ def _render_styles() -> None:
                     opacity: 0.7;
                 }
                 50% {
-                    transform: scale(1.18);
-                    opacity: 0.24;
+                    transform: scale(1.12);
+                    opacity: 0.26;
                 }
                 100% {
                     transform: scale(1);
@@ -503,6 +595,9 @@ def _render_styles() -> None:
                 border-radius: 24px;
                 background: rgba(255, 255, 255, 0.88);
                 border: 1px solid rgba(58, 42, 32, 0.12);
+                box-shadow: 0 18px 40px rgba(58, 42, 32, 0.06);
+                max-width: 100%;
+                box-sizing: border-box;
             }
 
             .section-soft {
@@ -523,6 +618,101 @@ def _render_styles() -> None:
                 line-height: 1.8;
                 margin: 0;
                 max-width: 780px;
+            }
+
+            .feature-strip {
+                display: grid;
+                grid-template-columns: repeat(4, minmax(0, 1fr));
+                gap: 1rem;
+                margin-top: 1.35rem;
+                width: 100%;
+                box-sizing: border-box;
+            }
+
+            .feature-strip-card {
+                display: flex;
+                flex-direction: column;
+                gap: 0.75rem;
+                padding: 1rem 1rem 1.1rem;
+                border-radius: 18px;
+                background: rgba(255, 255, 255, 0.78);
+                border: 1px solid rgba(58, 42, 32, 0.08);
+                min-width: 0;
+                box-sizing: border-box;
+            }
+
+            .feature-strip-card h3 {
+                color: var(--deep-umber);
+                font-size: 1rem;
+                margin: 0;
+                line-height: 1.35;
+                overflow-wrap: anywhere;
+            }
+
+            .feature-strip-card p {
+                color: #5c4d3d;
+                font-size: 0.94rem;
+                line-height: 1.65;
+                margin: 0;
+                overflow-wrap: anywhere;
+            }
+
+            .impact-strip {
+                display: grid;
+                grid-template-columns: repeat(4, minmax(0, 1fr));
+                gap: 1rem;
+                margin-top: 1.2rem;
+                width: 100%;
+                box-sizing: border-box;
+                padding: 1.2rem;
+                border-radius: 22px;
+                background: linear-gradient(135deg, rgba(92, 107, 71, 0.96), rgba(58, 42, 32, 0.96));
+                color: #f8efe2;
+            }
+
+            .impact-item {
+                display: flex;
+                flex-direction: column;
+                gap: 0.35rem;
+                min-width: 0;
+                box-sizing: border-box;
+            }
+
+            .impact-item strong {
+                font-size: 0.98rem;
+                font-weight: 800;
+                color: #fff8e9;
+                line-height: 1.35;
+                overflow-wrap: anywhere;
+            }
+
+            .impact-item span {
+                color: rgba(248, 239, 226, 0.82);
+                font-size: 0.92rem;
+                line-height: 1.6;
+                overflow-wrap: anywhere;
+            }
+
+            .feature-icon {
+                display: inline-flex;
+                align-items: center;
+                justify-content: center;
+                width: 42px;
+                height: 42px;
+                border-radius: 12px;
+                background: rgba(179, 85, 47, 0.12);
+                color: var(--clay);
+                flex-shrink: 0;
+            }
+
+            .feature-icon svg {
+                width: 24px;
+                height: 24px;
+                stroke: currentColor;
+                fill: none;
+                stroke-width: 1.8;
+                stroke-linecap: round;
+                stroke-linejoin: round;
             }
 
             .capability-grid,
@@ -792,6 +982,11 @@ def _render_styles() -> None:
                 .timeline-step:not(:last-child)::after {
                     display: none;
                 }
+
+                .feature-strip,
+                .impact-strip {
+                    grid-template-columns: repeat(2, minmax(0, 1fr));
+                }
             }
 
             @media (max-width: 640px) {
@@ -818,6 +1013,11 @@ def _render_styles() -> None:
 
                 .capability-grid,
                 .feature-grid {
+                    grid-template-columns: 1fr;
+                }
+
+                .feature-strip,
+                .impact-strip {
                     grid-template-columns: 1fr;
                 }
 
@@ -896,36 +1096,45 @@ def _render_status_strip() -> None:
 
 
 def _render_hero() -> None:
-    """Render the Field Documentary hero section."""
+    """Render the Field Documentary hero section with an editorial humanitarian visual."""
     st.markdown(
         f"""
         <section class="hero">
             <div class="hero-copy">
-                <div class="hero-kicker">Field documentary report</div>
-                <h1 class="hero-title">{APP_TITLE}</h1>
-                <p class="hero-subtitle">{APP_SUBTITLE}</p>
+                <div class="hero-kicker">Field documentary • ReliefLink AI</div>
+                <h1 class="hero-title">AI-POWERED<br/>RELIEF.<br/>REAL IMPACT.</h1>
+                <p class="hero-subtitle">Turning urgent situations into coordinated action through intelligence, memory, and collaboration.</p>
                 <p>{APP_DESCRIPTION}</p>
-                <div class="hero-tags">
-                    <span class="hero-tag">humanitarian</span>
-                    <span class="hero-tag">field reporting</span>
-                    <span class="hero-tag">memory-aware</span>
+                <div class="hero-actions">
+                    <span class="hero-pill">Humanitarian field ops</span>
+                    <span class="hero-pill">Trusted coordination</span>
+                    <span class="hero-pill">Memory-aware support</span>
                 </div>
             </div>
-            <div class="hero-image">
-                <div class="hero-map" role="img" aria-label="Map-inspired field coordination illustration showing terrain, water areas, a rescue point, and a route.">
-                    <div class="terrain-line"></div>
-                    <div class="water-line"></div>
-                    <svg viewBox="0 0 320 320" aria-hidden="true" role="img">
-                        <path d="M48 240 C92 216 110 148 162 137 C218 126 260 88 276 56" fill="none" stroke="#8fa6a3" stroke-width="3" stroke-linecap="round" opacity="0.72"/>
-                        <path d="M48 158 C86 150 118 162 154 180 C186 196 210 218 240 228" fill="none" stroke="#8fa6a3" stroke-width="3" stroke-linecap="round" opacity="0.6"/>
-                        <path d="M120 82 C132 88 150 87 164 82" fill="none" stroke="#5c6b47" stroke-width="4" stroke-linecap="round" opacity="0.9"/>
-                        <circle cx="180" cy="132" r="22" fill="#b3552f" opacity="0.96"/>
-                        <circle cx="180" cy="132" r="10" fill="#f2ead9"/>
-                        <path d="M174 152 L178 172 L182 152" stroke="#3a2a20" stroke-width="3" stroke-linecap="round"/>
-                        <circle class="pulse" cx="180" cy="132" r="34" fill="none" stroke="rgba(179, 85, 47, 0.24)" stroke-width="3"/>
-                        <circle cx="82" cy="232" r="12" fill="#5c6b47" opacity="0.9"/>
-                        <path d="M84 226 L94 218 L100 232" fill="none" stroke="#fff8ec" stroke-width="3" stroke-linecap="round"/>
-                    </svg>
+            <div class="hero-visual" aria-hidden="true">
+                <div class="hero-visual-shell">
+                    <div class="hero-map-panel">
+                        <div class="map-route"></div>
+                        <div class="map-pin"></div>
+                        <div class="map-signal"></div>
+                        <svg viewBox="0 0 320 320" role="img">
+                            <path d="M48 240 C92 216 112 150 164 138 C216 126 256 92 278 56" fill="none" stroke="#8fa6a3" stroke-width="3" stroke-linecap="round" opacity="0.72"/>
+                            <path d="M48 158 C88 152 118 162 154 182 C188 202 208 220 240 228" fill="none" stroke="#8fa6a3" stroke-width="3" stroke-linecap="round" opacity="0.6"/>
+                            <path d="M118 84 C130 90 148 90 162 84" fill="none" stroke="#5c6b47" stroke-width="4" stroke-linecap="round" opacity="0.95"/>
+                            <circle cx="180" cy="132" r="20" fill="#b3552f" opacity="0.96"/>
+                            <circle cx="180" cy="132" r="9" fill="#f2ead9"/>
+                            <path d="M174 152 L178 172 L182 152" stroke="#3a2a20" stroke-width="3" stroke-linecap="round"/>
+                            <circle cx="86" cy="232" r="12" fill="#5c6b47" opacity="0.9"/>
+                            <path d="M88 226 L98 218 L104 232" fill="none" stroke="#fff8ec" stroke-width="3" stroke-linecap="round"/>
+                        </svg>
+                        <div class="hero-report-card">
+                            <div class="report-label">ReliefLink AI</div>
+                            <div class="report-title">Incident Report</div>
+                            <p class="report-meta">Location: Flood / affected area</p>
+                            <p class="report-copy">People trapped, need immediate rescue.</p>
+                            <div class="report-button">Send Report</div>
+                        </div>
+                    </div>
                 </div>
             </div>
         </section>
@@ -953,35 +1162,16 @@ def _render_about_section() -> None:
 
 
 def _render_capabilities_section() -> None:
-    """Render the platform capability overview."""
+    """Render the platform capability overview in a concise editorial tone."""
     st.markdown(
         """
         <section class="section">
-            <div class="section-kicker">Platform capabilities</div>
-            <h2 class="section-title">Built for resilient reporting and humanitarian context</h2>
+            <div class="section-kicker">Editorial approach</div>
+            <h2 class="section-title">Built for trust, clarity, and field-ready coordination</h2>
             <p class="section-copy">
-                The current prototype brings together AI-assisted incident capture, persistent
-                memory, and future coordination support for on-the-ground responders.
+                ReliefLink AI turns urgent observations into coordinated action through incident
+                capture, memory-aware context, and stronger collaboration across the response chain.
             </p>
-            <div class="capability-grid">
-                <div class="capability-card">
-                    <h3>Report disaster events</h3>
-                    <p>Capture what happened, where it happened, and what kind of support is needed.</p>
-                </div>
-                <div class="capability-card">
-                    <h3>Persistent AI memory</h3>
-                    <p>Keep conversation context across exchanges so the assistant stays aligned
-                    with ongoing relief priorities.</p>
-                </div>
-                <div class="capability-card">
-                    <h3>Situation awareness</h3>
-                    <p>Turn unstructured field details into clearer, response-ready updates.</p>
-                </div>
-                <div class="capability-card">
-                    <h3>NGO coordination</h3>
-                    <p>Prepare the groundwork for later integrations with relief partners and teams.</p>
-                </div>
-            </div>
         </section>
         """,
         unsafe_allow_html=True,
@@ -989,74 +1179,86 @@ def _render_capabilities_section() -> None:
 
 
 def _render_feature_report() -> None:
-    """Render the feature grid as a field report summary."""
+    """Render the editorial feature strip and impact strip."""
     st.markdown(
         """
         <section class="section section-soft">
-            <div class="section-kicker">Feature summary</div>
-            <h2 class="section-title">What ReliefLink AI does today</h2>
+            <div class="section-kicker">Field capabilities</div>
+            <h2 class="section-title">What ReliefLink AI brings into view</h2>
+            <div class="feature-strip">
+                <div class="feature-strip-card">
+                    <div class="feature-icon" aria-hidden="true">
+                        <svg viewBox="0 0 24 24">
+                            <path d="M4 8.5h8l3-2.5v11l-3-2.5H4z" />
+                            <path d="M13 10.5v3" />
+                            <path d="M17 10.5c1.3 0 2.3 1 2.3 2.3S18.3 15 17 15" />
+                            <path d="M4 8.5v7" />
+                        </svg>
+                    </div>
+                    <h3>Report Disaster</h3>
+                    <p>Document urgent incidents clearly so response teams can act quickly.</p>
+                </div>
+                <div class="feature-strip-card">
+                    <div class="feature-icon" aria-hidden="true">
+                        <svg viewBox="0 0 24 24">
+                            <path d="M8 8.5c0-2.2 1.8-4 4-4h1.2c1.5 0 2.7 1 3.3 2.4" />
+                            <path d="M13.8 7.8c1.4.2 2.5 1.3 2.8 2.7" />
+                            <path d="M9.5 10.8c0 2.8 1.5 4.7 3.5 5.6" />
+                            <path d="M16.5 10.8c0 2.8-1.5 4.7-3.5 5.6" />
+                            <path d="M11 7.3c0-.7.6-1.3 1.3-1.3h1.4c.7 0 1.3.6 1.3 1.3v1.2" />
+                        </svg>
+                    </div>
+                    <h3>AI Memory</h3>
+                    <p>Keep important details available across the conversation for continuity.</p>
+                </div>
+                <div class="feature-strip-card">
+                    <div class="feature-icon" aria-hidden="true">
+                        <svg viewBox="0 0 24 24">
+                            <path d="M7 8.5l3-3h2l-2 4H8l-2 2" />
+                            <path d="M14 6.5l3-3h2l-2 4h-1l-2 2" />
+                            <path d="M8.5 10.5l2 2 2-2" />
+                            <path d="M10.5 12.5v3" />
+                            <path d="M14.5 12.5v3" />
+                        </svg>
+                    </div>
+                    <h3>NGO Coordination</h3>
+                    <p>Create a foundation for future relief partner workflows and shared response.</p>
+                </div>
+                <div class="feature-strip-card">
+                    <div class="feature-icon" aria-hidden="true">
+                        <svg viewBox="0 0 24 24">
+                            <path d="M6 5.5h12" />
+                            <path d="M6 12h12" />
+                            <path d="M6 18.5h12" />
+                            <path d="M9 4.5v15" />
+                            <path d="M15 4.5v15" />
+                            <path d="M12 7.2c1.7 0 3.1 1.3 3.1 2.9S13.7 13 12 13s-3.1-1.3-3.1-2.9S10.3 7.2 12 7.2z" />
+                            <path d="M12 11.7v4.8" />
+                        </svg>
+                    </div>
+                    <h3>Situation Awareness</h3>
+                    <p>Bring scattered details into a more actionable field picture.</p>
+                </div>
+            </div>
+            <div class="impact-strip">
+                <div class="impact-item">
+                    <strong>Faster Response</strong>
+                    <span>Help reaches sooner</span>
+                </div>
+                <div class="impact-item">
+                    <strong>Smarter Coordination</strong>
+                    <span>NGOs working together</span>
+                </div>
+                <div class="impact-item">
+                    <strong>Persistent Memory</strong>
+                    <span>No important detail gets lost</span>
+                </div>
+                <div class="impact-item">
+                    <strong>Better Decisions</strong>
+                    <span>Data-driven field action</span>
+                </div>
+            </div>
         </section>
-        """,
-        unsafe_allow_html=True,
-    )
-
-    st.markdown(
-        """
-        <div class="feature-grid">
-            <div class="feature-card">
-                <div class="feature-mark" aria-hidden="true">
-                    <svg viewBox="0 0 24 24">
-                        <path d="M4 8.5h8l3-2.5v11l-3-2.5H4z" />
-                        <path d="M13 10.5v3" />
-                        <path d="M17 10.5c1.3 0 2.3 1 2.3 2.3S18.3 15 17 15" />
-                        <path d="M4 8.5v7" />
-                    </svg>
-                </div>
-                <h3>Report Disaster</h3>
-                <p>Document urgent incidents clearly so response teams can act quickly.</p>
-            </div>
-            <div class="feature-card">
-                <div class="feature-mark" aria-hidden="true">
-                    <svg viewBox="0 0 24 24">
-                        <path d="M6 9.5c0-2.2 1.8-4 4-4h1.2c1.5 0 2.7 1 3.3 2.4" />
-                        <path d="M12.8 7.8c1.4.2 2.5 1.3 2.8 2.7" />
-                        <path d="M8.5 10.8c0 2.8 1.5 4.7 3.5 5.6" />
-                        <path d="M15.5 10.8c0 2.8-1.5 4.7-3.5 5.6" />
-                        <path d="M10 7.3c0-.7.6-1.3 1.3-1.3h1.4c.7 0 1.3.6 1.3 1.3v1.2" />
-                    </svg>
-                </div>
-                <h3>Persistent AI Memory</h3>
-                <p>Hold onto important details across the conversation for continuity.</p>
-            </div>
-            <div class="feature-card">
-                <div class="feature-mark" aria-hidden="true">
-                    <svg viewBox="0 0 24 24">
-                        <path d="M6 8.5l3-3h2l-2 4H8l-2 2" />
-                        <path d="M13 6.5l3-3h2l-2 4h-1l-2 2" />
-                        <path d="M8 10l2 2 2-2" />
-                        <path d="M10 12v3" />
-                        <path d="M14 12v3" />
-                    </svg>
-                </div>
-                <h3>Future NGO Coordination</h3>
-                <p>Create a foundation for future relief partner workflows and shared response.</p>
-            </div>
-            <div class="feature-card">
-                <div class="feature-mark" aria-hidden="true">
-                    <svg viewBox="0 0 24 24">
-                        <path d="M5 5.5h14" />
-                        <path d="M5 12h14" />
-                        <path d="M5 18.5h14" />
-                        <path d="M8 4.5v15" />
-                        <path d="M16 4.5v15" />
-                        <path d="M12 7.2c1.7 0 3.1 1.3 3.1 2.9S13.7 13 12 13s-3.1-1.3-3.1-2.9S10.3 7.2 12 7.2z" />
-                        <path d="M12 11.7v4.8" />
-                    </svg>
-                </div>
-                <h3>Better Situation Awareness</h3>
-                <p>Transform descriptions into actionable context that supports field decisions.</p>
-            </div>
-        </div>
         """,
         unsafe_allow_html=True,
     )
