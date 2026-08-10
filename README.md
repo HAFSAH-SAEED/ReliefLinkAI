@@ -11,7 +11,7 @@ This project is my exploration of combining conversational AI with memory to cre
 
 ---
 
-# 💡 Why I Built This
+# Why I Built This
 
 I've always been interested in using AI for problems that have real-world impact rather than just creating another chatbot.
 
@@ -32,15 +32,15 @@ ReliefLink AI is my first step toward exploring that idea.
 
 ---
 
-# ✨ What It Does
+# What It Does
 
 The application currently allows users to:
 
-- 💬 Chat with an AI disaster relief assistant
-- 🧠 Remember important information across conversations
-- ♻️ Reuse the same assistant instead of creating a new one every session
-- ⚡ Continue conversations naturally using Backboard Memory
-- 🎨 Interact through a clean Streamlit interface
+- Chat with an AI disaster relief assistant
+- Remember important information across conversations
+- Reuse the same assistant instead of creating a new one every session
+- Continue conversations naturally using Backboard Memory
+- Interact through a clean Streamlit interface
 
 For example, if a user previously shared:
 
@@ -50,7 +50,7 @@ The assistant can remember that information later without asking the user to rep
 
 ---
 
-# 🛠 Built With
+# Built With
 
 - Python
 - Streamlit
@@ -60,7 +60,7 @@ The assistant can remember that information later without asking the user to rep
 
 ---
 
-# 📂 Project Structure
+# Project Structure
 
 ```
 ReliefLinkAI/
@@ -80,7 +80,7 @@ ReliefLinkAI/
 
 ---
 
-# 🚀 Getting Started
+# Getting Started
 
 Clone the repository
 
@@ -103,7 +103,7 @@ streamlit run app.py
 
 ---
 
-# 🧠 Persistent Memory
+# Persistent Memory
 
 One of the main goals of this project was learning how AI assistants can maintain memory across conversations.
 
@@ -118,21 +118,21 @@ This project helped me better understand how persistent AI systems differ from t
 
 ---
 
-# 🚧 What's Next?
+# What's Next?
 
 This is still an early prototype, and I have plenty of ideas I'd love to explore:
 
-- 📍 Live location sharing
-- 🗺 Disaster maps
-- 🏥 NGO integration
-- 📱 WhatsApp support
-- 🌐 Multilingual conversations
-- 📸 Image-based damage reporting
-- 🚨 Emergency coordination workflows
+- Live location sharing
+- Disaster maps
+- NGO integration
+- WhatsApp support
+- Multilingual conversations
+- Image-based damage reporting
+- Emergency coordination workflows
 
 ---
 
-# 📚 What I Learned
+# What I Learned
 
 Building ReliefLink AI taught me much more than integrating an SDK.
 
@@ -150,7 +150,7 @@ One of the biggest challenges was debugging asynchronous API calls while keeping
 
 ---
 
-# 👩‍💻 About Me
+# About Me
 
 Hi! I'm **Hafsa Saeed**, a Computer Engineering student at **NUST CEME**.
 
@@ -160,6 +160,6 @@ This project is part of my journey toward learning how intelligent systems can b
 
 ---
 
-# 🙏 Acknowledgements
+# Acknowledgements
 
 Built during **MLH Global Hack Week: Agents** using the Backboard SDK.
