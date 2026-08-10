@@ -4,6 +4,8 @@ This file owns the visual presentation layer for the humanitarian landing page
 and the Streamlit chat surface that connects to the Backboard service layer.
 """
 
+from pathlib import Path
+
 import streamlit as st
 
 from config import APP_DESCRIPTION, APP_SUBTITLE, APP_TITLE, PROJECT_STATUS, PROJECT_VERSION
@@ -17,6 +19,8 @@ from services.backboard_client import (
     create_thread,
     send_message,
 )
+
+HERO_IMAGE = Path(__file__).resolve().parent / "assets" / "relieflink_hero.png"
 
 
 def render_homepage(page_config: dict[str, str]) -> None:
@@ -176,10 +180,10 @@ def _render_styles() -> None:
 
             .hero {
                 display: grid;
-                grid-template-columns: minmax(0, 1.05fr) minmax(320px, 0.95fr);
-                gap: 2rem;
+                grid-template-columns: minmax(0, 1.05fr) minmax(360px, 0.95fr);
+                gap: 4rem;
                 align-items: center;
-                padding: 2rem;
+                padding: 4rem 3rem;
                 border-radius: 28px;
                 background: linear-gradient(135deg, rgba(255, 255, 255, 0.94), rgba(242, 234, 217, 0.96));
                 border: 1px solid rgba(58, 42, 32, 0.12);
@@ -253,157 +257,49 @@ def _render_styles() -> None:
             }
 
             .hero-visual {
-                min-height: 430px;
                 width: 100%;
-                max-width: 100%;
+                max-width: 520px;
+                min-width: 0;
                 display: flex;
                 align-items: center;
                 justify-content: center;
-                min-width: 0;
-            }
-
-            .hero-visual-shell {
-                position: relative;
-                width: 100%;
-                max-width: 470px;
-                min-height: 430px;
-                border-radius: 28px;
-                background: linear-gradient(145deg, rgba(58, 42, 32, 0.96), rgba(92, 107, 71, 0.92));
-                border: 1px solid rgba(255, 255, 255, 0.14);
-                box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.14), 0 20px 45px rgba(58, 42, 32, 0.2);
-                overflow: hidden;
-                padding: 1rem;
                 box-sizing: border-box;
+                align-self: center;
             }
 
-            .hero-visual-shell::after {
-                content: '';
-                position: absolute;
-                inset: 0;
-                background: radial-gradient(circle at top right, rgba(232, 169, 76, 0.18), transparent 32%);
-                pointer-events: none;
-            }
-
-            .hero-map-panel {
-                position: relative;
+            .hero-visual [data-testid="stImage"] {
                 width: 100%;
                 height: 100%;
-                border-radius: 22px;
-                background: linear-gradient(180deg, rgba(242, 234, 217, 0.97), rgba(224, 213, 186, 0.96));
-                border: 1px solid rgba(58, 42, 32, 0.12);
-                overflow: hidden;
                 min-width: 0;
-                box-sizing: border-box;
+                display: flex;
+                align-items: stretch;
+                justify-content: center;
             }
 
-            .hero-map-panel::before {
-                content: '';
-                position: absolute;
-                inset: 0;
-                background-image: linear-gradient(rgba(58, 42, 32, 0.05) 1px, transparent 1px), linear-gradient(90deg, rgba(58, 42, 32, 0.05) 1px, transparent 1px);
-                background-size: 26px 26px;
-                opacity: 0.45;
-            }
-
-            .hero-map-panel svg {
-                position: absolute;
-                inset: 0;
+            .hero-visual [data-testid="stImage"] img {
                 width: 100%;
-                height: 100%;
-            }
-
-            .hero-map-panel .map-route {
-                position: absolute;
-                inset: 0;
-                background: radial-gradient(circle at 26% 28%, rgba(255, 255, 255, 0.7), transparent 14%),
-                    radial-gradient(circle at 72% 74%, rgba(255, 244, 219, 0.65), transparent 12%);
-            }
-
-            .hero-map-panel .map-pin {
-                position: absolute;
-                top: 26%;
-                left: 63%;
-                width: 76px;
-                height: 76px;
-                border-radius: 50%;
-                border: 2px solid rgba(179, 85, 47, 0.28);
-                background: rgba(179, 85, 47, 0.16);
-                transform: translate(-50%, -50%);
-                animation: pulse 3.2s ease-in-out infinite;
-            }
-
-            .hero-map-panel .map-pin::after {
-                content: '';
-                position: absolute;
-                inset: 16px;
-                border-radius: 50%;
-                background: var(--clay);
-                box-shadow: 0 0 0 6px rgba(179, 85, 47, 0.16);
-            }
-
-            .hero-map-panel .map-signal {
-                position: absolute;
-                bottom: 14%;
-                left: 16%;
-                width: 180px;
-                height: 180px;
-                border: 1px dashed rgba(143, 166, 163, 0.38);
-                border-radius: 50%;
-            }
-
-            .hero-report-card {
-                position: absolute;
-                left: 1.2rem;
-                bottom: 1.2rem;
-                width: min(72%, 270px);
-                padding: 1rem 1rem 0.95rem;
-                border-radius: 18px;
-                background: rgba(255, 248, 236, 0.94);
-                border: 1px solid rgba(58, 42, 32, 0.12);
-                box-shadow: 0 16px 32px rgba(58, 42, 32, 0.12);
-                backdrop-filter: blur(6px);
+                height: 500px;
                 min-width: 0;
-                box-sizing: border-box;
+                object-fit: cover;
+                object-position: center;
+                display: block;
+                border-radius: 24px;
+                box-shadow: 0 18px 40px rgba(58, 42, 32, 0.16);
             }
 
-            .hero-report-card .report-label {
-                font-size: 0.74rem;
-                font-weight: 800;
-                letter-spacing: 0.16em;
-                text-transform: uppercase;
-                color: var(--clay);
-                margin-bottom: 0.3rem;
-            }
-
-            .hero-report-card .report-title {
-                font-size: 1.02rem;
-                font-weight: 800;
-                color: var(--deep-umber);
-                margin-bottom: 0.35rem;
-            }
-
-            .hero-report-card .report-meta,
-            .hero-report-card .report-copy {
-                font-size: 0.9rem;
-                color: #5c4d3d;
-                line-height: 1.6;
-                margin: 0 0 0.25rem 0;
-                overflow-wrap: anywhere;
-            }
-
-            .hero-report-card .report-button {
-                display: inline-flex;
+            .hero-visual-fallback {
+                width: 100%;
+                height: 500px;
+                border-radius: 24px;
+                display: flex;
                 align-items: center;
                 justify-content: center;
-                margin-top: 0.7rem;
-                padding: 0.58rem 0.95rem;
-                border-radius: 999px;
-                background: var(--clay);
-                color: #fff;
+                padding: 1.5rem;
+                box-sizing: border-box;
+                background: linear-gradient(145deg, rgba(58, 42, 32, 0.96), rgba(92, 107, 71, 0.92));
+                color: #f7ede0;
                 font-weight: 700;
-                font-size: 0.82rem;
-                letter-spacing: 0.06em;
-                text-transform: uppercase;
+                text-align: center;
             }
 
             .hero-title,
@@ -574,6 +470,20 @@ def _render_styles() -> None:
             @media (max-width: 640px) {
                 .hero {
                     grid-template-columns: 1fr;
+                    padding: 1.5rem 1.25rem;
+                    gap: 1.5rem;
+                }
+
+                .hero-copy {
+                    max-width: 100%;
+                }
+
+                .hero-visual {
+                    max-width: 100%;
+                }
+
+                .hero-visual [data-testid="stImage"] img {
+                    height: 320px;
                 }
 
                 .timeline {
@@ -1096,10 +1006,14 @@ def _render_status_strip() -> None:
 
 
 def _render_hero() -> None:
-    """Render the Field Documentary hero section with an editorial humanitarian visual."""
-    st.markdown(
-        f"""
-        <section class="hero">
+    """Render the Field Documentary hero section with a native Streamlit image."""
+    st.markdown('<section class="hero">', unsafe_allow_html=True)
+
+    left_col, right_col = st.columns([1.05, 0.95], gap="large")
+
+    with left_col:
+        st.markdown(
+            f"""
             <div class="hero-copy">
                 <div class="hero-kicker">Field documentary • ReliefLink AI</div>
                 <h1 class="hero-title">AI-POWERED<br/>RELIEF.<br/>REAL IMPACT.</h1>
@@ -1111,36 +1025,19 @@ def _render_hero() -> None:
                     <span class="hero-pill">Memory-aware support</span>
                 </div>
             </div>
-            <div class="hero-visual" aria-hidden="true">
-                <div class="hero-visual-shell">
-                    <div class="hero-map-panel">
-                        <div class="map-route"></div>
-                        <div class="map-pin"></div>
-                        <div class="map-signal"></div>
-                        <svg viewBox="0 0 320 320" role="img">
-                            <path d="M48 240 C92 216 112 150 164 138 C216 126 256 92 278 56" fill="none" stroke="#8fa6a3" stroke-width="3" stroke-linecap="round" opacity="0.72"/>
-                            <path d="M48 158 C88 152 118 162 154 182 C188 202 208 220 240 228" fill="none" stroke="#8fa6a3" stroke-width="3" stroke-linecap="round" opacity="0.6"/>
-                            <path d="M118 84 C130 90 148 90 162 84" fill="none" stroke="#5c6b47" stroke-width="4" stroke-linecap="round" opacity="0.95"/>
-                            <circle cx="180" cy="132" r="20" fill="#b3552f" opacity="0.96"/>
-                            <circle cx="180" cy="132" r="9" fill="#f2ead9"/>
-                            <path d="M174 152 L178 172 L182 152" stroke="#3a2a20" stroke-width="3" stroke-linecap="round"/>
-                            <circle cx="86" cy="232" r="12" fill="#5c6b47" opacity="0.9"/>
-                            <path d="M88 226 L98 218 L104 232" fill="none" stroke="#fff8ec" stroke-width="3" stroke-linecap="round"/>
-                        </svg>
-                        <div class="hero-report-card">
-                            <div class="report-label">ReliefLink AI</div>
-                            <div class="report-title">Incident Report</div>
-                            <p class="report-meta">Location: Flood / affected area</p>
-                            <p class="report-copy">People trapped, need immediate rescue.</p>
-                            <div class="report-button">Send Report</div>
-                        </div>
-                    </div>
-                </div>
-            </div>
-        </section>
-        """,
-        unsafe_allow_html=True,
-    )
+            """,
+            unsafe_allow_html=True,
+        )
+
+    with right_col:
+        st.markdown('<div class="hero-visual">', unsafe_allow_html=True)
+        if HERO_IMAGE.exists():
+            st.image(HERO_IMAGE, use_container_width=True, output_format="auto")
+        else:
+            st.markdown('<div class="hero-visual-fallback">Local hero image unavailable</div>', unsafe_allow_html=True)
+        st.markdown('</div>', unsafe_allow_html=True)
+
+    st.markdown('</section>', unsafe_allow_html=True)
 
 
 def _render_about_section() -> None:
