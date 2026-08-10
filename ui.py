@@ -202,13 +202,53 @@ def _render_styles() -> None:
                 max-width: 100%;
             }
 
-            .hero-kicker {
-                font-size: 0.86rem;
-                font-weight: 700;
+            .hero-brand-banner {
+                display: flex;
+                flex-direction: column;
+                gap: 0.35rem;
+                padding: 1rem 1.1rem;
+                margin: 0 0 1rem 0;
+                border: 1px solid rgba(58, 42, 32, 0.12);
+                border-left: 3px solid var(--clay);
+                border-radius: 22px;
+                background: linear-gradient(135deg, #f7efe2 0%, #efe3cf 100%);
+                box-shadow: 0 10px 24px rgba(58, 42, 32, 0.05);
+                max-width: 100%;
+                width: 100%;
+                box-sizing: border-box;
+            }
+
+            .hero-brand-label {
+                font-size: 0.74rem;
+                font-weight: 800;
                 letter-spacing: 0.2em;
                 text-transform: uppercase;
+                color: var(--olive);
+            }
+
+            .hero-brand-title {
+                font-family: 'Fraunces', Georgia, Cambria, 'Times New Roman', serif;
+                font-size: clamp(1.9rem, 3.2vw, 2.5rem);
+                line-height: 1.05;
+                letter-spacing: -0.02em;
+                color: var(--deep-umber);
+                font-weight: 700;
+            }
+
+            .hero-brand-tagline {
+                font-size: 0.86rem;
+                font-weight: 700;
+                letter-spacing: 0.16em;
+                text-transform: uppercase;
                 color: var(--clay);
-                margin-bottom: 0.25rem;
+            }
+
+            .hero-brand-copy {
+                margin: 0;
+                color: #5c4d3d;
+                font-size: 0.95rem;
+                line-height: 1.65;
+                max-width: 620px;
             }
 
             .hero-title {
@@ -1009,13 +1049,24 @@ def _render_hero() -> None:
     """Render the Field Documentary hero section with a native Streamlit image."""
     st.markdown('<section class="hero">', unsafe_allow_html=True)
 
+    st.markdown(
+        """
+        <div class="hero-brand-banner">
+            <div class="hero-brand-label">Field documentary</div>
+            <div class="hero-brand-title">RELIEFLINK AI</div>
+            <div class="hero-brand-tagline">AI-POWERED RELIEF • REAL IMPACT</div>
+            <p class="hero-brand-copy">Intelligent disaster reporting, persistent memory, and coordinated humanitarian response.</p>
+        </div>
+        """,
+        unsafe_allow_html=True,
+    )
+
     left_col, right_col = st.columns([1.05, 0.95], gap="large")
 
     with left_col:
         st.markdown(
             f"""
             <div class="hero-copy">
-                <div class="hero-kicker">Field documentary • ReliefLink AI</div>
                 <h1 class="hero-title">AI-POWERED<br/>RELIEF.<br/>REAL IMPACT.</h1>
                 <p class="hero-subtitle">Turning urgent situations into coordinated action through intelligence, memory, and collaboration.</p>
                 <p>{APP_DESCRIPTION}</p>
