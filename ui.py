@@ -531,6 +531,7 @@ def _render_styles() -> None:
                 gap: 1rem;
                 grid-template-columns: repeat(2, minmax(0, 1fr));
                 margin-top: 1.4rem;
+                width: 100%;
             }
 
             .capability-card,
@@ -543,6 +544,10 @@ def _render_styles() -> None:
                 display: flex;
                 flex-direction: column;
                 justify-content: space-between;
+                width: 100%;
+                box-sizing: border-box;
+                min-width: 0;
+                overflow-wrap: anywhere;
             }
 
             .capability-card h3,
@@ -550,6 +555,8 @@ def _render_styles() -> None:
                 color: var(--deep-umber);
                 font-size: 1.1rem;
                 margin: 0 0 0.65rem 0;
+                line-height: 1.35;
+                overflow-wrap: anywhere;
             }
 
             .capability-card p,
@@ -558,20 +565,30 @@ def _render_styles() -> None:
                 font-size: 0.98rem;
                 line-height: 1.75;
                 margin: 0;
+                overflow-wrap: anywhere;
             }
 
             .feature-mark {
                 display: inline-flex;
                 align-items: center;
                 justify-content: center;
-                width: 40px;
-                height: 40px;
+                width: 42px;
+                height: 42px;
                 border-radius: 12px;
                 background: rgba(179, 85, 47, 0.12);
                 color: var(--clay);
-                font-weight: 700;
-                font-size: 1rem;
                 margin-bottom: 0.9rem;
+                flex-shrink: 0;
+            }
+
+            .feature-mark svg {
+                width: 24px;
+                height: 24px;
+                stroke: currentColor;
+                fill: none;
+                stroke-width: 1.8;
+                stroke-linecap: round;
+                stroke-linejoin: round;
             }
 
             .chat-section {
@@ -667,6 +684,7 @@ def _render_styles() -> None:
                 display: grid;
                 gap: 1rem;
                 margin-top: 1.4rem;
+                width: 100%;
             }
 
             .roadmap-item {
@@ -676,17 +694,23 @@ def _render_styles() -> None:
                 border: 1px solid rgba(58, 42, 32, 0.08);
                 display: grid;
                 gap: 0.45rem;
+                width: 100%;
+                box-sizing: border-box;
+                min-width: 0;
             }
 
             .roadmap-item strong {
                 color: var(--deep-umber);
                 font-size: 1rem;
                 font-weight: 800;
+                line-height: 1.35;
+                overflow-wrap: anywhere;
             }
 
             .roadmap-item span {
                 color: #5c4d3d;
                 font-size: 0.95rem;
+                overflow-wrap: anywhere;
             }
 
             .roadmap-label {
@@ -694,6 +718,7 @@ def _render_styles() -> None:
                 align-items: center;
                 justify-content: center;
                 width: fit-content;
+                max-width: 100%;
                 padding: 0.4rem 0.75rem;
                 border-radius: 999px;
                 font-size: 0.82rem;
@@ -701,6 +726,9 @@ def _render_styles() -> None:
                 color: #ffffff;
                 transition: transform 150ms ease, box-shadow 150ms ease;
                 transform-origin: center;
+                white-space: normal;
+                text-align: center;
+                line-height: 1.3;
             }
 
             .roadmap-label:hover {
@@ -781,6 +809,20 @@ def _render_styles() -> None:
 
                 .timeline {
                     grid-template-columns: 1fr;
+                }
+
+                .section,
+                .chat-section {
+                    padding: 1.3rem;
+                }
+
+                .capability-grid,
+                .feature-grid {
+                    grid-template-columns: 1fr;
+                }
+
+                .roadmap-item {
+                    padding: 1rem 1rem;
                 }
             }
         </style>
@@ -958,56 +1000,66 @@ def _render_feature_report() -> None:
         unsafe_allow_html=True,
     )
 
-    card_1, card_2 = st.columns(2, gap="large")
-
-    with card_1:
-        st.markdown(
-            """
+    st.markdown(
+        """
+        <div class="feature-grid">
             <div class="feature-card">
-                <div class="feature-mark">?</div>
+                <div class="feature-mark" aria-hidden="true">
+                    <svg viewBox="0 0 24 24">
+                        <path d="M4 8.5h8l3-2.5v11l-3-2.5H4z" />
+                        <path d="M13 10.5v3" />
+                        <path d="M17 10.5c1.3 0 2.3 1 2.3 2.3S18.3 15 17 15" />
+                        <path d="M4 8.5v7" />
+                    </svg>
+                </div>
                 <h3>Report Disaster</h3>
                 <p>Document urgent incidents clearly so response teams can act quickly.</p>
             </div>
-            """,
-            unsafe_allow_html=True,
-        )
-
-        st.markdown(
-            """
             <div class="feature-card">
-                <div class="feature-mark">?</div>
+                <div class="feature-mark" aria-hidden="true">
+                    <svg viewBox="0 0 24 24">
+                        <path d="M6 9.5c0-2.2 1.8-4 4-4h1.2c1.5 0 2.7 1 3.3 2.4" />
+                        <path d="M12.8 7.8c1.4.2 2.5 1.3 2.8 2.7" />
+                        <path d="M8.5 10.8c0 2.8 1.5 4.7 3.5 5.6" />
+                        <path d="M15.5 10.8c0 2.8-1.5 4.7-3.5 5.6" />
+                        <path d="M10 7.3c0-.7.6-1.3 1.3-1.3h1.4c.7 0 1.3.6 1.3 1.3v1.2" />
+                    </svg>
+                </div>
                 <h3>Persistent AI Memory</h3>
-                <p>Hold onto important details across the conversation for continuity.
-                </p>
+                <p>Hold onto important details across the conversation for continuity.</p>
             </div>
-            """,
-            unsafe_allow_html=True,
-        )
-
-    with card_2:
-        st.markdown(
-            """
             <div class="feature-card">
-                <div class="feature-mark">?</div>
+                <div class="feature-mark" aria-hidden="true">
+                    <svg viewBox="0 0 24 24">
+                        <path d="M6 8.5l3-3h2l-2 4H8l-2 2" />
+                        <path d="M13 6.5l3-3h2l-2 4h-1l-2 2" />
+                        <path d="M8 10l2 2 2-2" />
+                        <path d="M10 12v3" />
+                        <path d="M14 12v3" />
+                    </svg>
+                </div>
                 <h3>Future NGO Coordination</h3>
-                <p>Create a foundation for future relief partner workflows and shared response.
-                </p>
+                <p>Create a foundation for future relief partner workflows and shared response.</p>
             </div>
-            """,
-            unsafe_allow_html=True,
-        )
-
-        st.markdown(
-            """
             <div class="feature-card">
-                <div class="feature-mark">??</div>
+                <div class="feature-mark" aria-hidden="true">
+                    <svg viewBox="0 0 24 24">
+                        <path d="M5 5.5h14" />
+                        <path d="M5 12h14" />
+                        <path d="M5 18.5h14" />
+                        <path d="M8 4.5v15" />
+                        <path d="M16 4.5v15" />
+                        <path d="M12 7.2c1.7 0 3.1 1.3 3.1 2.9S13.7 13 12 13s-3.1-1.3-3.1-2.9S10.3 7.2 12 7.2z" />
+                        <path d="M12 11.7v4.8" />
+                    </svg>
+                </div>
                 <h3>Better Situation Awareness</h3>
-                <p>Transform descriptions into actionable context that supports field decisions.
-                </p>
+                <p>Transform descriptions into actionable context that supports field decisions.</p>
             </div>
-            """,
-            unsafe_allow_html=True,
-        )
+        </div>
+        """,
+        unsafe_allow_html=True,
+    )
 
 
 def _render_workflow_section() -> None:
@@ -1125,8 +1177,8 @@ def _render_roadmap_section() -> None:
     roadmap_items = [
         ("Phase 1 — Interface", "✓ DONE", "status-complete"),
         ("Phase 2 — Disaster Reporting", "✓ DONE", "status-complete"),
-        ("Phase 3 — AI Assistant", "→ ✓ DONE", "status-complete"),
-        ("Phase 4 — Persistent Memory", "→ ✓ DONE", "status-complete"),
+        ("Phase 3 — AI Assistant", "✓ DONE", "status-complete"),
+        ("Phase 4 — Persistent Memory", "✓ DONE", "status-complete"),
         ("Phase 5 — NGO Integration", "→ SOON", "status-live"),
     ]
 
